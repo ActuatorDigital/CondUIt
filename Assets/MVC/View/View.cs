@@ -1,6 +1,8 @@
 ﻿using MVC.Controllers;
 using System.Linq;
 using UnityEngine;
+using System;
+using MVC.Routing;
 
 namespace MVC.Views
 {
@@ -9,57 +11,20 @@ namespace MVC.Views
         [SerializeField]
         private TransitionHandler[] _transitionHandlers = new TransitionHandler[0];
 
-        IController _controller;
-        public C Controller
+        private IMvcRouting _routing;
+        private object _model;
+
+        public M Model { get { return (M)_model; } }
+
+        public void Init(IMvcRouting routing)
         {
-            get { return (C)_controller; }
-            set { _controller = value; }
+            _routing = routing;
         }
 
-        public object ViewModel { get; set; }
-        internal M Model
+        public void Render(object model)
         {
-            get { return (M)ViewModel; }
-            set { ViewModel = value; }
-        }
-
-        private void Awake()
-        {
-            ConnectMVC();
-        }
-
-        private IController GetController(GameObject go)
-        {
-            return go.GetComponents(typeof(IController))
-                .FirstOrDefault() as IController;
-        }
-
-        private void BringToFront()
-        {
-            var controller = transform.parent.GetComponent(typeof(IController));
-            if (controller != null) transform.parent.SetAsLastSibling();
-
-            transform.SetAsLastSibling();
-        }
-
-        public void ConnectMVC()
-        {
-            _controller = GetController(gameObject);
-            if (_controller == null)
-                _controller = GetController(transform.parent.gameObject);
-            if (Controller == null)
-                throw new MissingComponentException(
-                    GetType().FullName + " could not find" +
-                    " it's controller " + typeof(C).FullName +
-                    " on GameObject " + gameObject.name +
-                    " or on " + gameObject.transform.parent.name + "."
-                );
-        }
-
-        public void Render()
-        {
+            _model = model;
             LoadElements();
-            BringToFront();
             foreach (var handler in _transitionHandlers)
                 handler.OnShow();
         }
@@ -73,6 +38,16 @@ namespace MVC.Views
 
         protected abstract void LoadElements();
         protected abstract void ClearElements();
+
+        protected void Action (string action, params object[] args)
+        {
+            _routing.Action<C>(action, args);
+        }
+
+        protected void Action<T> (string action, params object[] args) where T : IController
+        {
+            _routing.Action<T>(action, args);
+        }
     }
 }
 

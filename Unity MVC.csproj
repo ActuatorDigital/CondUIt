@@ -75,6 +75,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Example\Controllers\MonsterController.cs" />
+    <Compile Include="Assets\Example\Controllers\TeamController.cs" />
+    <Compile Include="Assets\Example\ExampleStart.cs" />
+    <Compile Include="Assets\Example\Model\MonsterModel.cs" />
+    <Compile Include="Assets\Example\Model\TeamModel.cs" />
+    <Compile Include="Assets\Example\Services\IMonsterService.cs" />
+    <Compile Include="Assets\Example\Services\ITeamServices.cs" />
+    <Compile Include="Assets\Example\Services\MonsterService.cs" />
+    <Compile Include="Assets\Example\Services\TeamServices.cs" />
+    <Compile Include="Assets\Example\Views\Monster\CreateMonsterView.cs" />
+    <Compile Include="Assets\Example\Views\Monster\DeleteMonsterView.cs" />
+    <Compile Include="Assets\Example\Views\OnGUIView.cs" />
+    <Compile Include="Assets\Example\Views\Team\TeamView.cs" />
     <Compile Include="Assets\MVC\Controller\Controller.cs" />
     <Compile Include="Assets\MVC\Controller\IController.cs" />
     <Compile Include="Assets\MVC\Controller\IServicesLoader.cs" />
@@ -82,6 +95,8 @@
     <Compile Include="Assets\MVC\Model\IModel.cs" />
     <Compile Include="Assets\MVC\Model\Model.cs" />
     <Compile Include="Assets\MVC\MvcInitialization.cs" />
+    <Compile Include="Assets\MVC\Routing\IMvcRouting.cs" />
+    <Compile Include="Assets\MVC\Routing\MvcRouting.cs" />
     <Compile Include="Assets\MVC\View\IView.cs" />
     <Compile Include="Assets\MVC\View\TransitionHandler.cs" />
     <Compile Include="Assets\MVC\View\View.cs" />

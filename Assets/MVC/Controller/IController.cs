@@ -1,11 +1,9 @@
-﻿using MVC.Models;
-using System;
+﻿using MVC.Routing;
 
 namespace MVC.Controllers
 {
     public interface IController
     {
-        void Init(Action<IModel> context, IModel model);
-        void Display();
+        void Init(IMvcRouting routing, IServicesLoader services);
     }
 }

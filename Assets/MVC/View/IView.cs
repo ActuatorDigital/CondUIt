@@ -1,9 +1,12 @@
-﻿namespace MVC.Views
+﻿using MVC.Routing;
+
+namespace MVC.Views
 {
     public interface IView
     {
-        object ViewModel { get; set; }
-        void Render();
+        void Init(IMvcRouting routing);
+        void Render(object model);
+        void Hide();
     }
 }
 

@@ -1,2 +1,4 @@
-﻿public interface IModel {}
+﻿namespace MVC.Models {
+    public interface IModel { }
+}
 

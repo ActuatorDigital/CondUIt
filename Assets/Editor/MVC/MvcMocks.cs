@@ -1,4 +1,8 @@
-﻿namespace MVC {
+﻿using MVC.Controllers;
+using MVC.Models;
+using MVC.Views;
+
+namespace MVC {
     public class TestControllerOne : Controller<TestModel> {
         public override void Display() {}
 

@@ -77,8 +77,11 @@
   <ItemGroup>
     <Compile Include="Assets\MVC\Controller\Controller.cs" />
     <Compile Include="Assets\MVC\Controller\IController.cs" />
+    <Compile Include="Assets\MVC\Controller\IServicesLoader.cs" />
+    <Compile Include="Assets\MVC\Controller\ServicesLoader.cs" />
     <Compile Include="Assets\MVC\Model\IModel.cs" />
     <Compile Include="Assets\MVC\Model\Model.cs" />
+    <Compile Include="Assets\MVC\MvcInitialization.cs" />
     <Compile Include="Assets\MVC\View\IView.cs" />
     <Compile Include="Assets\MVC\View\TransitionHandler.cs" />
     <Compile Include="Assets\MVC\View\View.cs" />

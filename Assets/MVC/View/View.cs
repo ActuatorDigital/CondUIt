@@ -1,7 +1,5 @@
 ﻿using MVC.Controllers;
-using System.Linq;
 using UnityEngine;
-using System;
 using MVC.Routing;
 
 namespace MVC.Views

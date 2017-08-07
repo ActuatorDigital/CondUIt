@@ -1,11 +1,11 @@
-﻿using MVC.Models;
-using System;
+﻿using System;
 
-namespace MVC.Controllers
-{
-    public interface IController
-    {
+namespace MVC {
+
+    public interface IController {
         void Init(Action<IModel> context, IModel model);
         void Display();
+        void LoadServices(IServicesLoader services);
+        bool Exclusive { get; }
     }
 }

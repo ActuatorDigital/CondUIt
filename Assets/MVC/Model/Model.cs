@@ -1,15 +1,17 @@
-﻿namespace MVC.Models
-{
+﻿
+namespace MVC {
+
     public abstract class Model<P> : IModel
-            where P : IModel
-    {
+            where P : IModel {
+
         public P Parent { get; set; }
-        public Model(P parent)
-        {
+        public Model() { }
+        public Model(P parent) {
             Parent = parent;
         }
     }
 
-    public abstract class ModelRoot : IModel { }
+    public abstract class ModelRoot : IModel {
+        public ModelRoot() { }
+    }
 }
-

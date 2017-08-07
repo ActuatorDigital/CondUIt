@@ -1,9 +1,9 @@
-﻿namespace MVC.Views
-{
-    public interface IView
-    {
+﻿
+namespace MVC {
+    public interface IView {
+
         object ViewModel { get; set; }
+
         void Render();
     }
 }
-

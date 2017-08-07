@@ -24,6 +24,9 @@ namespace MVC {
 
             // Assert.
             Assert.IsFalse(viewGo.activeInHierarchy);
+
+            GameObject.DestroyImmediate(canvasGo);
+
         }
 
         [Test]
@@ -45,6 +48,9 @@ namespace MVC {
 
             // Assert.
             Assert.IsTrue(viewGo.activeInHierarchy);
+
+            GameObject.DestroyImmediate(canvasGo);
+
         }
 
         [Test]
@@ -66,21 +72,53 @@ namespace MVC {
             var view = viewGo.AddComponent<TestView>();
             viewGo.transform.parent = controllerGoOne.transform;
 
-            view.transform.SetAsFirstSibling();
-            controllerGoOne.transform.SetAsFirstSibling();
-
             // Act.
             view.Render();
 
-            // Assert.
-            var parentIndex = controllerGoOne.transform.GetSiblingIndex() + 1;
-            var parentCount = canvasGo.transform.childCount;
-            Assert.AreEqual(parentIndex, parentCount);
+            Assert.IsTrue(viewGo.activeInHierarchy);
+            
+            GameObject.DestroyImmediate(canvasGo);
+        }
 
-            var siblingIndex = view.transform.GetSiblingIndex() + 1;
-            var siblingCount = controllerGoOne.transform.childCount;
-            Assert.AreEqual(siblingIndex, siblingCount);
+        [Test]
+        public void ExclusiveControllerHidesOthers() {
 
+            // Arrange First Controller and view.
+            var canvasGo = new GameObject();
+
+            var controllerGoOne = new GameObject();
+            controllerGoOne.transform.parent = canvasGo.transform;
+            var controllerOne = controllerGoOne.AddComponent<TestExclusiveControllerOne>();
+            controllerOne.Init((x) => { }, new TestModel(null));
+            AddPeerViews(controllerGoOne.transform);
+
+            var viewGOOne = new GameObject();
+            var viewOne = viewGOOne.AddComponent<TestExclusiveViewOne>();
+            viewGOOne.transform.parent = controllerGoOne.transform;
+
+            // Arrange Second Controller and view.
+            var controllerGoTwo = new GameObject();
+            controllerGoTwo.transform.parent = canvasGo.transform;
+            var controllerTwo = controllerGoTwo.AddComponent<TestExclusiveControllerTwo>();
+            controllerTwo.Init((x) => { }, new TestModel(null));
+            AddPeerViews(controllerGoTwo.transform);
+            
+            var viewGOTwo = new GameObject();
+            var viewTwo = viewGOOne.AddComponent<TestExclusiveViewTwo>();
+            viewGOTwo.transform.parent = controllerGoOne.transform;
+
+            controllerOne.ConnectMVC();
+            controllerTwo.ConnectMVC();
+
+            // Act.
+            controllerOne.Action<TestExclusiveControllerTwo>(
+                "FunctionOnControllerTwo", 
+                new TestModel(null)
+            );
+
+            Assert.IsTrue(viewGOTwo.activeInHierarchy);
+            Assert.IsTrue(!viewGOOne.activeInHierarchy);
+            
             GameObject.DestroyImmediate(canvasGo);
         }
 

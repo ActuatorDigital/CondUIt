@@ -1,9 +1,40 @@
-﻿using MVC.Controllers;
-using MVC.Models;
-using MVC.Views;
+﻿
+using System;
 
 namespace MVC {
+
+    public class TestExclusiveControllerOne : Controller<TestModel> {
+        public override bool Exclusive {
+            get { return true; }
+        }
+
+        public override void Display() { }
+    }
+
+    public class TestExclusiveControllerTwo : Controller<TestModel> {
+        public override bool Exclusive {
+            get { return true; }
+        }
+
+        public override void Display() { }
+        public void FunctionOnControllerTwo() { }
+    }
+
+    public class TestExclusiveViewOne : View<TestModel, TestExclusiveControllerOne> {
+        protected override void ClearElements() { }
+        protected override void LoadElements() { }
+    }
+
+    public class TestExclusiveViewTwo : View<TestModel, TestExclusiveControllerTwo> {
+        protected override void ClearElements() { }
+        protected override void LoadElements() { }
+    }
+
     public class TestControllerOne : Controller<TestModel> {
+        public override bool Exclusive {
+            get { return false; }
+        }
+
         public override void Display() {}
 
         public void ChangeTestStr(string test) {
@@ -13,6 +44,10 @@ namespace MVC {
     }
 
     public class TestControllerTwo : Controller<TestModel> {
+        public override bool Exclusive {
+            get { return false; }
+        }
+
         public override void Display() { }
 
         internal void TriggerAction(string postTest) {

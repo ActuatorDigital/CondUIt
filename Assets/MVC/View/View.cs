@@ -1,52 +1,41 @@
-﻿using MVC.Controllers;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
-namespace MVC.Views
-{
-    public abstract class View<M, C> : MonoBehaviour, IView where C : IController
-    {
+namespace MVC {
+    public abstract class View<M, C> :
+        MonoBehaviour, IView
+        where C : IController {
+
         [SerializeField]
         private TransitionHandler[] _transitionHandlers = new TransitionHandler[0];
 
         IController _controller;
-        public C Controller
-        {
+        public C Controller {
             get { return (C)_controller; }
             set { _controller = value; }
         }
 
         public object ViewModel { get; set; }
-        internal M Model
-        {
+        internal M Model {
             get { return (M)ViewModel; }
             set { ViewModel = value; }
         }
 
-        private void Awake()
-        {
+        private void Awake() {
             ConnectMVC();
+
+            if (_transitionHandlers == null || !_transitionHandlers.Any())
+                _transitionHandlers = new TransitionHandler[] {
+                    gameObject.AddComponent<OnOffTransition>()
+                };
         }
 
-        private IController GetController(GameObject go)
-        {
-            return go.GetComponents(typeof(IController))
-                .FirstOrDefault() as IController;
+        private IController GetController(GameObject go) {
+            return go.GetComponent<C>() as IController;
         }
 
-        private void BringToFront()
-        {
-            var controller = transform.parent.GetComponent(typeof(IController));
-            if (controller != null) transform.parent.SetAsLastSibling();
-
-            transform.SetAsLastSibling();
-        }
-
-        public void ConnectMVC()
-        {
-            _controller = GetController(gameObject);
-            if (_controller == null)
-                _controller = GetController(transform.parent.gameObject);
+        public void ConnectMVC() {
+            _controller = FindParentController();
             if (Controller == null)
                 throw new MissingComponentException(
                     GetType().FullName + " could not find" +
@@ -56,16 +45,25 @@ namespace MVC.Views
                 );
         }
 
-        public void Render()
-        {
-            LoadElements();
-            BringToFront();
-            foreach (var handler in _transitionHandlers)
-                handler.OnShow();
+        public IController FindParentController() {
+            IController controller;
+            var searchTarget = gameObject;
+            do {
+                controller = GetController(searchTarget);
+                if (controller == null)
+                    searchTarget = searchTarget.transform.parent.gameObject;
+            } while (controller == null && searchTarget.transform.parent != null);
+
+            return controller;
         }
 
-        public void Hide()
-        {
+        public void Render() {
+            foreach (var handler in _transitionHandlers)
+                handler.OnShow();
+            LoadElements();
+        }
+
+        public void Hide() {
             foreach (var handler in _transitionHandlers)
                 handler.OnHide();
             ClearElements();
@@ -75,4 +73,3 @@ namespace MVC.Views
         protected abstract void ClearElements();
     }
 }
-

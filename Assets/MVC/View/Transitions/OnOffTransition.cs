@@ -1,4 +1,4 @@
-﻿namespace MVC.Views
+﻿namespace MVC
 {
     public class OnOffTransition : TransitionHandler
     {

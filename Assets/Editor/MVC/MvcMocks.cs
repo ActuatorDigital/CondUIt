@@ -9,6 +9,8 @@ namespace MVC {
         }
 
         public override void Display() { }
+
+        public override void LoadServices(IServicesLoader services) { }
     }
 
     public class TestExclusiveControllerTwo : Controller<TestModel> {
@@ -18,6 +20,8 @@ namespace MVC {
 
         public override void Display() { }
         public void FunctionOnControllerTwo() { }
+
+        public override void LoadServices(IServicesLoader services) { }
     }
 
     public class TestExclusiveViewOne : View<TestModel, TestExclusiveControllerOne> {
@@ -41,6 +45,8 @@ namespace MVC {
             Context.TestString = test;
             SaveContext();
         }
+
+        public override void LoadServices(IServicesLoader services) { }
     }
 
     public class TestControllerTwo : Controller<TestModel> {
@@ -49,6 +55,8 @@ namespace MVC {
         }
 
         public override void Display() { }
+
+        public override void LoadServices(IServicesLoader services) { }
 
         internal void TriggerAction(string postTest) {
             Action<TestControllerOne>("ChangeTestStr", Context, postTest);

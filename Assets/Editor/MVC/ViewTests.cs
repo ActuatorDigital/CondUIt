@@ -85,6 +85,7 @@ namespace MVC {
 
             // Arrange First Controller and view.
             var canvasGo = new GameObject();
+            var mvc = canvasGo.AddComponent<MVCFramework>();
 
             var controllerGoOne = new GameObject();
             controllerGoOne.transform.parent = canvasGo.transform;
@@ -107,8 +108,7 @@ namespace MVC {
             var viewTwo = viewGOOne.AddComponent<TestExclusiveViewTwo>();
             viewGOTwo.transform.parent = controllerGoOne.transform;
 
-            controllerOne.ConnectMVC();
-            controllerTwo.ConnectMVC();
+            mvc.Initialize();
 
             // Act.
             controllerOne.Action<TestExclusiveControllerTwo>(

@@ -1,23 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace MVC {
-    class ControllerReferences {
-        public static List<MonoBehaviour> Views = new List<MonoBehaviour>();
-        public static List<MonoBehaviour> Controllers = new List<MonoBehaviour>();
-
-        public static void HideViews() {
-            foreach (MonoBehaviour v in Views)
-                v.gameObject.SetActive(false);
-        }
-    }
 
     public abstract class Controller<M> :
             MonoBehaviour, IController
             where M : IModel {
+
+        internal MVCFramework _framework;
 
         public Action<IModel> OnSaveChanges;
 
@@ -29,29 +20,13 @@ namespace MVC {
 
         public abstract bool Exclusive { get; }
 
-        private void Start() {
-            ConnectMVC();
-            ControllerReferences.HideViews();
-        }
-
-        public void ConnectMVC() {
-
-            if (ControllerReferences.Controllers.Any())
-                ControllerReferences.Controllers.Clear();
-            if (ControllerReferences.Views.Any())
-                ControllerReferences.Views.Clear();
-
-            var behaviours = gameObject.FindObjectsOfTypeAll<MonoBehaviour>();
-            foreach (var b in behaviours) {
-                if (b.GetType().GetInterfaces().Contains(typeof(IController)))
-                    ControllerReferences.Controllers.Add(b);
-                if (b.GetType().GetInterfaces().Contains(typeof(IView)))
-                    ControllerReferences.Views.Add(b);
-            }
-        }
+        public abstract void LoadServices(IServicesLoader services);
 
         public abstract void Display();
-        public virtual void LoadServices(IServicesLoader services) { }
+
+        public void LoadFramework(MVCFramework framework) {
+            _framework = framework;
+        }
 
         public void Init(Action<IModel> onSave, IModel context) {
             OnSaveChanges = onSave;
@@ -93,10 +68,10 @@ namespace MVC {
         }
 
         private MonoBehaviour ActivateController(Type controllerType) {
-            var controller = ControllerReferences.Controllers.FirstOrDefault(
+            var controller = _framework.Controllers.FirstOrDefault(
                 c => c.GetType().IsAssignableFrom(controllerType));
             if ((controller as IController).Exclusive)
-                ControllerReferences.HideViews();
+                _framework.HideViews();
             var controllerViews = controller.gameObject
                 .GetComponentsInChildren<MonoBehaviour>()
                 .Where(v => v is IView);
@@ -108,7 +83,7 @@ namespace MVC {
         public void View<V>(object viewModel = null) where V : IView {
             Type viewType = typeof(V);
 
-            foreach (MonoBehaviour mbView in ControllerReferences.Views) {
+            foreach (MonoBehaviour mbView in _framework.Views) {
                 if (mbView.GetType().IsAssignableFrom(viewType)) {
                     var view = (mbView as IView);
                     view.ViewModel = viewModel;
@@ -132,37 +107,7 @@ namespace MVC {
                 throw new ApplicationException(errorMsg);
             }
         }
-        
-    }
-
-    public static class GameObjectExtensions {
-
-        public static List<T> FindObjectsOfTypeAll<T>() {
-            List<T> results = new List<T>();
-            for (int i = 0; i < SceneManager.sceneCount; i++) {
-                var s = SceneManager.GetSceneAt(i);
-                if (s.isLoaded) {
-                    var allGameObjects = s.GetRootGameObjects();
-                    for (int j = 0; j < allGameObjects.Length; j++) {
-                        var go = allGameObjects[j];
-                        results.AddRange(go.GetComponentsInChildren<T>(true));
-                    }
-                }
-            }
-            return results;
-        }
-
-        public static List<T> FindObjectsOfTypeAll<T>(this GameObject mb) {
-            return FindObjectsOfTypeAll<T>();
-        }
-
-        public static IController FindControllerOfType(this GameObject mb, Type contextType) {
-            var controllerType = typeof(Controller<>).MakeGenericType(contextType);
-            var controller = UnityEngine.Object.FindObjectsOfType(typeof(MonoBehaviour))
-                .FirstOrDefault(c => c.GetType().IsSubclassOf(controllerType))
-                    as IController;
-            return controller;
-        }
 
     }
+    
 }

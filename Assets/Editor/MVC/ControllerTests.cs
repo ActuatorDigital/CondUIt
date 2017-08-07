@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using NUnit.Framework;
 
 namespace MVC {
@@ -7,8 +6,12 @@ namespace MVC {
 
         [Test]
         public void ChangesCanSave() {
+            var canvas = new GameObject("Canvas");
+            canvas.AddComponent<MVCFramework>();
+
             // Arrange.
             var gameObject = new GameObject();
+            gameObject.transform.parent = canvas.transform;
             var controller = gameObject.AddComponent<TestControllerOne>();
             const string PRE_TEST_STR = "pre", POST_TEST_STR = "post";
             bool changed = false;
@@ -34,16 +37,21 @@ namespace MVC {
             const string PRE_TEST_STR = "pre", 
                          POST_TEST_STR = "post";
 
+            var canvas = new GameObject("Canvas");
+            var mvc = canvas.AddComponent<MVCFramework>();
+
             var controllerOne = new GameObject()
                 .AddComponent<TestControllerOne>();
-            controllerOne.ConnectMVC();
             controllerOne.Context = new TestModel(PRE_TEST_STR);
+            controllerOne.gameObject.transform.parent = canvas.transform;
 
             var controllerTwo = new GameObject()
                 .AddComponent<TestControllerTwo>();
-            controllerTwo.ConnectMVC();
             controllerTwo.Context = new TestModel(POST_TEST_STR);
+            controllerTwo.gameObject.transform.parent = canvas.transform;
             controllerTwo.OnSaveChanges += (x) => { };
+
+            mvc.Initialize();
 
             try {
                 // Act.

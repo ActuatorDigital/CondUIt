@@ -9,9 +9,7 @@ namespace MVC {
             where M : IModel {
 
         internal MVCFramework _framework;
-
-        public Action<IModel> OnSaveChanges;
-
+        
         IModel _context;
         public M Context {
             get { return (M)_context; }
@@ -28,13 +26,12 @@ namespace MVC {
             _framework = framework;
         }
 
-        public void Init(Action<IModel> onSave, IModel context) {
-            OnSaveChanges = onSave;
+        public void Init(IModel context) {
             _context = context;
         }
 
         public void SaveContext() {
-            OnSaveChanges.Invoke(_context);
+            _framework.OnSaveChanges.Invoke(_context);
         }
 
         public void Action<C>(
@@ -45,7 +42,7 @@ namespace MVC {
             Type controllerType = typeof(C);
             MonoBehaviour controller = ActivateController(controllerType);
 
-            if (OnSaveChanges == null)
+            if (_framework.OnSaveChanges == null)
                 throw new MissingComponentException(
                     "OnSaveChanges not set for " + controllerType.GetType().FullName + "." +
                     " Failed to Call action " + action + ".");
@@ -62,7 +59,7 @@ namespace MVC {
                     controllerType.GetType().FullName + "." +
                     " Failed to call action " + action + ".");
 
-            (controller as IController).Init(OnSaveChanges, context);
+            (controller as IController).Init(context);
             method.Invoke(controller, args);
 
         }
@@ -107,7 +104,6 @@ namespace MVC {
                 throw new ApplicationException(errorMsg);
             }
         }
-
     }
     
 }

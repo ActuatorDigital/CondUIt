@@ -10,14 +10,14 @@ namespace MVC {
 
         public List<MonoBehaviour> Views = new List<MonoBehaviour>();
         public List<MonoBehaviour> Controllers = new List<MonoBehaviour>();
+        public Action<IModel> OnSaveChanges;
 
-        public ServiceLoader _services = new ServiceLoader();
+        ServiceLoader _services = new ServiceLoader();
 
-        private void Start() {
-            Initialize();
-        }
+        public void Initialize<C>( Action<IModel> onSave, IModel model ) 
+                where C : IController {
 
-        public void Initialize() {
+            OnSaveChanges = onSave;
 
             if (Controllers.Any())
                 Controllers.Clear();
@@ -25,16 +25,17 @@ namespace MVC {
                 Views.Clear();
 
             ConnectMVC();
-            DeliverServices();
+            DeliverServices<C>(model);
         }
 
-        void ConnectMVC() {
+        void ConnectMVC()  {
 
-            var behaviours = gameObject.FindObjectsOfTypeAll<MonoBehaviour>();
+            var behaviours = gameObject.GetComponentsInChildren<MonoBehaviour>();
             foreach (var b in behaviours) {
-                if (b.GetType().GetInterfaces().Contains(typeof(IController)))
+                if (b.GetType().GetInterfaces().Contains(typeof(IController))) {
                     Controllers.Add(b);
-                if (b.GetType().GetInterfaces().Contains(typeof(IView)))
+
+                } if (b.GetType().GetInterfaces().Contains(typeof(IView)))
                     Views.Add(b);
             }
 
@@ -42,21 +43,26 @@ namespace MVC {
 
         }
 
-        public void HideViews() {
+        internal void HideViews() {
             foreach (MonoBehaviour v in Views)
                 v.gameObject.SetActive(false);
         }
 
-        public void DeliverServices() {
+        void DeliverServices<C>(IModel model) where C : IController {
             foreach (IController c in Controllers) {
                 c.LoadFramework(this);
                 c.LoadServices(_services);
+                if (c is C) {
+                    var firstController = (c as IController);
+                    firstController.Init(model);
+                    firstController.Display();
+                }
             }
             _services.ClearServices();
         }
     }
 
-    public class ServiceLoader : IServicesLoader {
+    class ServiceLoader : IServicesLoader {
         private static Dictionary<Type, object> Services = new Dictionary<Type, object>();
         private const string MISSING_SERVICE_LOG = "No service was registered for {0}.";
 
@@ -76,37 +82,6 @@ namespace MVC {
                 return (T)Services[serviceType];
             else
                 throw new Exception(string.Format(MISSING_SERVICE_LOG, serviceType.Name));
-        }
-
-    }
-
-    public static class GameObjectExtensions {
-
-        public static List<T> FindObjectsOfTypeAll<T>() {
-            List<T> results = new List<T>();
-            for (int i = 0; i < SceneManager.sceneCount; i++) {
-                var s = SceneManager.GetSceneAt(i);
-                if (s.isLoaded) {
-                    var allGameObjects = s.GetRootGameObjects();
-                    for (int j = 0; j < allGameObjects.Length; j++) {
-                        var go = allGameObjects[j];
-                        results.AddRange(go.GetComponentsInChildren<T>(true));
-                    }
-                }
-            }
-            return results;
-        }
-
-        public static List<T> FindObjectsOfTypeAll<T>(this GameObject mb) {
-            return FindObjectsOfTypeAll<T>();
-        }
-
-        public static IController FindControllerOfType(this GameObject mb, Type contextType) {
-            var controllerType = typeof(Controller<>).MakeGenericType(contextType);
-            var controller = UnityEngine.Object.FindObjectsOfType(typeof(MonoBehaviour))
-                .FirstOrDefault(c => c.GetType().IsSubclassOf(controllerType))
-                    as IController;
-            return controller;
         }
 
     }

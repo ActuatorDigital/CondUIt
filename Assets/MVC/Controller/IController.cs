@@ -3,7 +3,7 @@
 namespace MVC {
 
     public interface IController {
-        void Init(Action<IModel> context, IModel model);
+        void Init(IModel model);
         void Display();
         void LoadServices(IServicesLoader services);
         void LoadFramework(MVCFramework framework);

@@ -5,8 +5,7 @@ using UnityEngine;
 namespace MVC {
 
     public abstract class Controller<M> :
-            MonoBehaviour, IController
-            where M : IModel {
+            MonoBehaviour, IController {
 
         internal MVCFramework _framework;
 

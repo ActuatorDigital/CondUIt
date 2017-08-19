@@ -6,6 +6,33 @@ namespace MVC {
     public class ViewTests {
 
         [Test]
+        public void ControllerCanCallItsViews() {
+            // Arrange = First Controller and view.
+            var canvasGo = new GameObject();
+            var mvc = canvasGo.AddComponent<MVCFramework>();
+
+            var controllerGoOne = new GameObject();
+            controllerGoOne.transform.parent = canvasGo.transform;
+            var controllerOne = controllerGoOne.AddComponent<TestExclusiveControllerOne>();
+            AddPeerViews(controllerGoOne.transform);
+
+            var viewGOOne = new GameObject();
+            var viewOne = viewGOOne.AddComponent<TestExclusiveViewOne>();
+            viewGOOne.transform.parent = controllerGoOne.transform;
+
+            var initialString = "Test";
+            var modelObj = new TestModel(initialString);
+
+            mvc.Initialize<TestExclusiveControllerOne>();
+
+            // Act - Call view from controller.
+            controllerOne.View<TestExclusiveViewOne>(modelObj);
+
+            // Assert.
+            Assert.AreNotEqual(modelObj.TestString, initialString);
+        }
+
+        [Test]
         public void CanHideViews() {
             // Arrange.
             var canvasGo = new GameObject();
@@ -90,7 +117,6 @@ namespace MVC {
             var controllerGoOne = new GameObject();
             controllerGoOne.transform.parent = canvasGo.transform;
             var controllerOne = controllerGoOne.AddComponent<TestExclusiveControllerOne>();
-            controllerOne.Init((x) => { }, new TestModel(null));
             AddPeerViews(controllerGoOne.transform);
 
             var viewGOOne = new GameObject();
@@ -101,20 +127,16 @@ namespace MVC {
             var controllerGoTwo = new GameObject();
             controllerGoTwo.transform.parent = canvasGo.transform;
             var controllerTwo = controllerGoTwo.AddComponent<TestExclusiveControllerTwo>();
-            controllerTwo.Init((x) => { }, new TestModel(null));
             AddPeerViews(controllerGoTwo.transform);
             
             var viewGOTwo = new GameObject();
             var viewTwo = viewGOOne.AddComponent<TestExclusiveViewTwo>();
             viewGOTwo.transform.parent = controllerGoOne.transform;
 
-            mvc.Initialize();
+            mvc.Initialize<TestExclusiveControllerOne>();
 
             // Act.
-            controllerOne.Action<TestExclusiveControllerTwo>(
-                "FunctionOnControllerTwo", 
-                new TestModel(null)
-            );
+            controllerOne.Action<TestExclusiveControllerTwo>("FunctionOnControllerTwo");
 
             Assert.IsTrue(viewGOTwo.activeInHierarchy);
             Assert.IsTrue(!viewGOOne.activeInHierarchy);

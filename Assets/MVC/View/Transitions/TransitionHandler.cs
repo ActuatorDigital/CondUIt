@@ -6,5 +6,4 @@ namespace MVC {
         public abstract void OnShow();
         public abstract void OnHide();
     }
-
 }

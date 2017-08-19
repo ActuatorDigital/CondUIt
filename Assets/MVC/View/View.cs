@@ -16,7 +16,7 @@ namespace MVC {
         }
 
         public object ViewModel { get; set; }
-        internal M Model {
+        protected M Model {
             get { return (M)ViewModel; }
             set { ViewModel = value; }
         }

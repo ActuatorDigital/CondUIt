@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace MVC {
 
@@ -10,14 +9,11 @@ namespace MVC {
 
         public List<MonoBehaviour> Views = new List<MonoBehaviour>();
         public List<MonoBehaviour> Controllers = new List<MonoBehaviour>();
-        public Action<IModel> OnSaveChanges;
 
         ServiceLoader _services = new ServiceLoader();
 
-        public void Initialize<C>( Action<IModel> onSave, IModel model ) 
-                where C : IController {
-
-            OnSaveChanges = onSave;
+        public void Initialize<FirstController>() where FirstController : IController 
+        {
 
             if (Controllers.Any())
                 Controllers.Clear();
@@ -25,17 +21,27 @@ namespace MVC {
                 Views.Clear();
 
             ConnectMVC();
-            DeliverServices<C>(model);
+            DeliverServices<FirstController>();
+        }
+
+        public MVCFramework RegisterService<T>(object service) {
+            _services.RegisterService(service.GetType(), service);
+            return this;
+        }
+
+        public MVCFramework RegisterService<T>() where T: new() {
+            var service = new T();
+            _services.RegisterService(service);
+            return this;
         }
 
         void ConnectMVC()  {
 
             var behaviours = gameObject.GetComponentsInChildren<MonoBehaviour>();
             foreach (var b in behaviours) {
-                if (b.GetType().GetInterfaces().Contains(typeof(IController))) {
+                if (b.GetType().GetInterfaces().Contains(typeof(IController))) 
                     Controllers.Add(b);
-
-                } if (b.GetType().GetInterfaces().Contains(typeof(IView)))
+                if (b.GetType().GetInterfaces().Contains(typeof(IView)))
                     Views.Add(b);
             }
 
@@ -48,13 +54,12 @@ namespace MVC {
                 v.gameObject.SetActive(false);
         }
 
-        void DeliverServices<C>(IModel model) where C : IController {
+        void DeliverServices<C>() where C : IController {
             foreach (IController c in Controllers) {
                 c.LoadFramework(this);
                 c.LoadServices(_services);
                 if (c is C) {
                     var firstController = (c as IController);
-                    firstController.Init(model);
                     firstController.Display();
                 }
             }
@@ -72,7 +77,11 @@ namespace MVC {
             Services = null;
         }
 
-        private void RegisterService<T>(T service) {
+        internal void RegisterService(Type t, object service) {
+            Services[t] = service;
+        }
+
+        internal void RegisterService<T>(T service) {
             Services[typeof(T)] = service;
         }
 

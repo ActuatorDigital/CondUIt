@@ -9,12 +9,6 @@ namespace MVC {
             where M : IModel {
 
         internal MVCFramework _framework;
-        
-        IModel _context;
-        public M Context {
-            get { return (M)_context; }
-            set { _context = value as IModel; }
-        }
 
         public abstract bool Exclusive { get; }
 
@@ -26,26 +20,14 @@ namespace MVC {
             _framework = framework;
         }
 
-        public void Init(IModel context) {
-            _context = context;
-        }
-
-        public void SaveContext() {
-            _framework.OnSaveChanges.Invoke(_context);
-        }
-
         public void Action<C>(
                 string action,
-                IModel context,
                 params object[] args) where C : IController {
+
+            CheckFrameworkInitialized();
 
             Type controllerType = typeof(C);
             MonoBehaviour controller = ActivateController(controllerType);
-
-            if (_framework.OnSaveChanges == null)
-                throw new MissingComponentException(
-                    "OnSaveChanges not set for " + controllerType.GetType().FullName + "." +
-                    " Failed to Call action " + action + ".");
 
             if (controller == null)
                 throw new MissingComponentException(
@@ -58,8 +40,7 @@ namespace MVC {
                     "Action " + action + " not found on " +
                     controllerType.GetType().FullName + "." +
                     " Failed to call action " + action + ".");
-
-            (controller as IController).Init(context);
+            
             method.Invoke(controller, args);
 
         }
@@ -78,22 +59,38 @@ namespace MVC {
         }
 
         public void View<V>(object viewModel = null) where V : IView {
+            CheckFrameworkInitialized();
+
             Type viewType = typeof(V);
 
+            bool found = false;
             foreach (MonoBehaviour mbView in _framework.Views) {
                 if (mbView.GetType().IsAssignableFrom(viewType)) {
                     var view = (mbView as IView);
                     view.ViewModel = viewModel;
                     mbView.gameObject.SetActive(true);
                     view.Render();
-                    return;
+                    found = true;
+                } else {
+                    // TODO: Handling of partial views.
+                    mbView.gameObject.SetActive(false);
                 }
             }
 
-            throw new MissingComponentException(
-                "Failed to Display " + viewType.FullName +
-                ", View not found.");
+            if(!found)
+                throw new MissingComponentException(
+                    "Failed to Display " + viewType.FullName +
+                    ", View not found.");
 
+        }
+
+        void CheckFrameworkInitialized() {
+            if (_framework == null)
+                throw new TypeInitializationException(
+                    typeof(MVCFramework).FullName,
+                    new Exception("Calling action before framework has been Initialized, run " +
+                    "MVCFramweork.Initialize with the default controller before calling actions.")
+                );
         }
 
         void TypeCheck<T>(Type type) {

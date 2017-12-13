@@ -136,7 +136,7 @@ namespace MVC {
             mvc.Initialize<TestExclusiveControllerOne>();
 
             // Act.
-            controllerOne.Action<TestExclusiveControllerTwo>("FunctionOnControllerTwo");
+            controllerOne.Action<TestExclusiveControllerTwo>().FunctionOnControllerTwo();
 
             Assert.IsTrue(viewGOTwo.activeInHierarchy);
             Assert.IsTrue(!viewGOOne.activeInHierarchy);

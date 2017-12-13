@@ -9,6 +9,8 @@ namespace MVC {
         [SerializeField]
         private TransitionHandler[] _transitionHandlers = new TransitionHandler[0];
 
+        public abstract bool IsPartial { get; }
+
         IController _controller;
         public C Controller {
             get { return (C)_controller; }

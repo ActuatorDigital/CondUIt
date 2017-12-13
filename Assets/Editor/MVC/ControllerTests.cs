@@ -12,6 +12,7 @@ namespace MVC {
 
             var canvas = new GameObject("Canvas");
             var mvc = canvas.AddComponent<MVCFramework>();
+            mvc.Initialize<TestControllerOne>();
 
             var controllerOne = new GameObject()
                 .AddComponent<TestControllerOne>();

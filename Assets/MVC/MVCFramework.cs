@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace MVC {
 
+    [RequireComponent(typeof(Canvas))]
     public class MVCFramework : MonoBehaviour{
 
         public List<MonoBehaviour> Views = new List<MonoBehaviour>();
@@ -25,7 +26,9 @@ namespace MVC {
         }
 
         public MVCFramework RegisterService<T>(object service) {
-            _services.RegisterService(service.GetType(), service);
+            if (_services.CheckServiceRegistered<T>())
+                throw new Exception("A service for " + typeof(T).FullName + " is already registered");
+            _services.RegisterService(typeof(T), service);
             return this;
         }
 
@@ -36,9 +39,9 @@ namespace MVC {
         }
 
         void ConnectMVC()  {
-
-            var behaviours = gameObject.GetComponentsInChildren<MonoBehaviour>();
-            foreach (var b in behaviours) {
+            
+            var behaviours = gameObject.GetComponentsInChildren(typeof(MonoBehaviour), true);
+            foreach (MonoBehaviour b in behaviours) {
                 if (b.GetType().GetInterfaces().Contains(typeof(IController))) 
                     Controllers.Add(b);
                 if (b.GetType().GetInterfaces().Contains(typeof(IView)))
@@ -48,7 +51,7 @@ namespace MVC {
             HideViews();
 
         }
-
+        
         internal void HideViews() {
             foreach (MonoBehaviour v in Views)
                 v.gameObject.SetActive(false);
@@ -59,8 +62,15 @@ namespace MVC {
                 c.LoadFramework(this);
                 c.LoadServices(_services);
                 if (c is C) {
-                    var firstController = (c as IController);
-                    firstController.Display();
+
+                    var method = typeof(C).GetMethod("Main");
+                    if (method == null)
+                        throw new MissingMethodException(
+                            "Main method not found on StartUp Controller" +
+                            typeof(C).FullName + "." +
+                            " Failed to Deliver Services.");
+
+                    method.Invoke((c as IController), null);
                 }
             }
             _services.ClearServices();
@@ -93,6 +103,9 @@ namespace MVC {
                 throw new Exception(string.Format(MISSING_SERVICE_LOG, serviceType.Name));
         }
 
+        internal bool CheckServiceRegistered<T>() {
+            return Services.ContainsKey(typeof(T));
+        }
     }
     
 }

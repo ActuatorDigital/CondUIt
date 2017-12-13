@@ -4,6 +4,8 @@ namespace MVC {
 
         object ViewModel { get; set; }
 
+        bool IsPartial { get; }
+
         void Render();
     }
 }

@@ -1,2 +1,8 @@
-Library/
+.vscode
+obj/
 Temp/
+Build/
+Library/
+Packages/
+Assets/VSCode/*
+ProjectSettings/*

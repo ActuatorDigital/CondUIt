@@ -16,8 +16,7 @@ namespace MVC {
             var controllerOne = controllerGoOne.AddComponent<TestExclusiveControllerOne>();
             AddPeerViews(controllerGoOne.transform);
 
-            var viewGOOne = new GameObject();
-            var viewOne = viewGOOne.AddComponent<TestExclusiveViewOne>();
+            var viewGOOne = new GameObject().AddComponent<TestExclusiveViewOne>();
             viewGOOne.transform.parent = controllerGoOne.transform;
 
             var initialString = "Test";
@@ -71,7 +70,7 @@ namespace MVC {
             viewGo.transform.parent = controllerGoOne.transform;
 
             // Act.
-            view.Render();
+            view.Render(); 
 
             // Assert.
             Assert.IsTrue(viewGo.activeInHierarchy);
@@ -120,7 +119,7 @@ namespace MVC {
             AddPeerViews(controllerGoOne.transform);
 
             var viewGOOne = new GameObject();
-            var viewOne = viewGOOne.AddComponent<TestExclusiveViewOne>();
+            viewGOOne.AddComponent<TestExclusiveViewOne>();
             viewGOOne.transform.parent = controllerGoOne.transform;
 
             // Arrange Second Controller and view.
@@ -130,7 +129,7 @@ namespace MVC {
             AddPeerViews(controllerGoTwo.transform);
             
             var viewGOTwo = new GameObject();
-            var viewTwo = viewGOOne.AddComponent<TestExclusiveViewTwo>();
+            viewGOTwo.AddComponent<TestExclusiveViewTwo>();
             viewGOTwo.transform.parent = controllerGoOne.transform;
 
             mvc.Initialize<TestExclusiveControllerOne>();

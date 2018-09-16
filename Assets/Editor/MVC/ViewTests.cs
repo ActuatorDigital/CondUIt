@@ -125,7 +125,7 @@ namespace MVC {
             // Arrange Second Controller and view.
             var controllerGoTwo = new GameObject();
             controllerGoTwo.transform.parent = canvasGo.transform;
-            var controllerTwo = controllerGoTwo.AddComponent<TestExclusiveControllerTwo>();
+            controllerGoTwo.AddComponent<TestExclusiveControllerTwo>();
             AddPeerViews(controllerGoTwo.transform);
             
             var viewGOTwo = new GameObject();

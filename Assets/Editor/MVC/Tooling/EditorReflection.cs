@@ -2,15 +2,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using MVC;
+using System.Reflection;
 
 public static class EditorReflection{
 
+    public static Assembly CurrentAssembly {
+        get{
+            return AppDomain.CurrentDomain
+                .GetAssemblies()
+                .FirstOrDefault(a => 
+                    a.FullName.Contains("Assembly-CSharp") &&
+                    !a.FullName.Contains("Editor") );
+        }
+    }
+
     private static List<Type> GetDomainTypes<T>(){
         var type = typeof(T);
-        var types = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(s => s.GetTypes())
+        var types = CurrentAssembly.GetTypes() 
             .Where(p => type.IsAssignableFrom(p));
-        return types.ToList();
+        return types.ToList(); 
     }
 
     public static List<Type> GetModelTypes(){

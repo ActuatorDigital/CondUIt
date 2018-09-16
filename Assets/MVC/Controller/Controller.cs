@@ -4,25 +4,44 @@ using UnityEngine;
 
 namespace MVC {
 
-    public abstract class Controller :
-        MonoBehaviour, IController{
+    public abstract class Controller<M> :
+            MonoBehaviour, IController {
 
         internal MVCFramework _framework;
-        
+
         public abstract bool Exclusive { get; }
 
         public abstract void LoadServices(IServicesLoader services);
+
+        // public abstract void Display();
 
         public void LoadFramework(MVCFramework framework) {
             _framework = framework;
         }
 
-        public C Action<C>() where C : Controller {
+        public C Action<C>(
+                // string action,
+                // params object[] args
+                ) where C : class, IController {
 
             CheckFrameworkInitialized();
 
             Type controllerType = typeof(C);
             return ActivateController(controllerType) as C;
+
+            // if (controller == null)
+            //     throw new MissingComponentException(
+            //         "Controller " + controllerType.GetType().FullName +
+            //         " not found. Failed to Call action " + action + ".");
+
+            // var method = controllerType.GetMethod(action);
+            // if (method == null)
+            //     throw new MissingMethodException(
+            //         "Action " + action + " not found on " +
+            //         controllerType.GetType().FullName + "." +
+            //         " Failed to call action " + action + ".");
+            
+            // method.Invoke(controller, args);
 
         }
 
@@ -46,12 +65,16 @@ namespace MVC {
 
             bool found = false;
             foreach (MonoBehaviour mbView in _framework.Views) {
-                var view = (mbView as IView);
                 if (mbView.GetType().IsAssignableFrom(viewType)) {
+                    var view = (mbView as IView);
                     view.ViewModel = viewModel;
+                    mbView.gameObject.SetActive(true);
                     view.Render();
                     found = true;
-                } 
+                } else {
+                    // TODO: Handling of partial views.
+                    mbView.gameObject.SetActive(false);
+                }
             }
 
             if(!found)
@@ -71,6 +94,7 @@ namespace MVC {
         }
 
         void TypeCheck<T>(Type type) {
+            // Check if we've been given a controller.
             if (type.IsAssignableFrom(typeof(T))) {
                 var errorMsg = type.FullName +
                     " is not a " + typeof(T).FullName;

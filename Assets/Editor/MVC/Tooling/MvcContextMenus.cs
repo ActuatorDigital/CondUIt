@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class MvcContextMenu : MonoBehaviour {
+public class MvcContextMenus : MonoBehaviour {
 
 	[MenuItem("GameObject/UI/MVC/Controller")]
 	static void CreateController(){
-		UnityEngine.Debug.Log("Show Controller creation menu here");
+		CreateControllerEditorWindow.Display();
 	}
 
 	[MenuItem("GameObject/UI/MVC/View")]

@@ -45,7 +45,7 @@ public class CreateControllerEditorWindow : EditorWindow {
 
 		GUILayout.Space(20);
 
-        EditorGUILayout.Popup(
+        _selectedPopupIndex = EditorGUILayout.Popup(
             "Select Model",
             _selectedPopupIndex,
             _modelTypes.Select(m => m.FullName).ToArray()

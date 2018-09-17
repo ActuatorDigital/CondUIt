@@ -15,6 +15,7 @@ public class CreateControllerEditorWindow : EditorWindow {
 
 	int _selectedPopupIndex = 0;
 	List<Type> _modelTypes;
+	bool __exclusive = false;
 
 	private string SelectedModelStr {
 		get {
@@ -38,57 +39,97 @@ public class CreateControllerEditorWindow : EditorWindow {
 		window.minSize = window.maxSize =new Vector2(490,250);
 	}
 
-	void OnGUI() {
-		var generatedText = MvcCodeGeneration.GenerateControllerTemplate( SelectedModelStr, SelectedControllerStr );
-		foreach(var line in generatedText.Split('\n'))
-			GUILayout.Label(line);
+	void OnGUI()
+    {
+		
+        GUILayout.Space(10);
 
-		GUILayout.Space(20);
+        DrawNameInput();
+        DrawInputRow();
+        
+		string generatedText = DrawGeneratedText();
+ 
+        GUILayout.Space(10);
 
+        if (!_modelTypes.Any())
+            DrawCreateModelFirstMessage();
+        else if (!_generatingController)
+            DrawGenerateControllerButton(generatedText);
+        else
+            DrawGeneratingControllerMessage();
+
+    }
+
+	private void DrawInputRow(){
+		GUILayout.BeginHorizontal();
+		DrawModelInput();
+		DrawExclusiveInput();
+		GUILayout.EndHorizontal();
+	}
+
+    private void DrawExclusiveInput()
+    {
+        __exclusive = GUILayout.Toggle(__exclusive, "Exclude others when activated.");
+    }
+
+    private void DrawGeneratingControllerMessage()
+    {
+        GUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        GUILayout.Label("Adding " + SelectedControllerStr + "Controller...", GUILayout.ExpandWidth(true));
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
+    }
+
+    private void DrawGenerateControllerButton(string generatedText)
+    {
+        if (GUILayout.Button("Create"))
+        {
+            MvcEditorFactory.AddControllerToSolution(
+                SelectedControllerStr,
+                generatedText);
+            _generatingController = true;
+        }
+    }
+
+    private static void DrawCreateModelFirstMessage()
+    {
+        GUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        GUILayout.Label("Generating a Cotnroller, first requried a Model:", GUILayout.ExpandWidth(true));
+		GUILayout.Button("Generate Model");
+        GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
+    }
+
+    private string DrawGeneratedText()
+    {
+		GUILayout.BeginVertical("Box");
+        var generatedText = MvcCodeGeneration.GenerateControllerTemplate(SelectedModelStr, SelectedControllerStr);
+        foreach (var line in generatedText.Split('\n'))
+            GUILayout.Label(line);
+		GUILayout.EndVertical();
+        return generatedText;
+    }
+
+    private void DrawModelInput()
+    {
         _selectedPopupIndex = EditorGUILayout.Popup(
-            "Select Model",
-            _selectedPopupIndex,
-            _modelTypes.Select(m => m.FullName).ToArray()
-        );
+                    "Select Model",
+                    _selectedPopupIndex,
+                    _modelTypes.Select(m => m.FullName).ToArray()
+                );
+    }
 
+    private void DrawNameInput()
+    {
         GUILayout.BeginHorizontal();
         GUILayout.Label("Enter name for controller", GUILayout.ExpandWidth(false));
         _controllerName = GUILayout.TextField(_controllerName, GUILayout.ExpandWidth(true));
         GUILayout.EndHorizontal();
-
-		GUILayout.Space(10);
-
-		if(!_modelTypes.Any()){
-
-			GUILayout.BeginHorizontal();		
-			GUILayout.FlexibleSpace();
-			GUILayout.Label( "First add a model to solution.", GUILayout.ExpandWidth(true) );			
-			GUILayout.FlexibleSpace();		
-			GUILayout.EndHorizontal();
-
-		} else if (!_generatingController) {
-
-			if (GUILayout.Button("Create")) {
-				MvcEditorFactory.AddControllerToSolution(
-					SelectedControllerStr, 
-					generatedText );
-				_generatingController = true; 
-			}
-
-		} else {
-
-			GUILayout.BeginHorizontal();		
-			GUILayout.FlexibleSpace();
-			GUILayout.Label( "Adding "+SelectedControllerStr+"Controller...", GUILayout.ExpandWidth(true) );			
-			GUILayout.FlexibleSpace();		
-			GUILayout.EndHorizontal();
-
-		}
-
     }
 
-	
-	private void OnEnable() {
+    private void OnEnable() {
 		_modelTypes = EditorReflection.GetModelTypes();
 		EditorApplication.update += Update;
 	}

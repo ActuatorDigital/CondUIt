@@ -6,3 +6,5 @@ Library/
 Packages/
 Assets/VSCode/*
 ProjectSettings/*
+*.sln
+*.csproj

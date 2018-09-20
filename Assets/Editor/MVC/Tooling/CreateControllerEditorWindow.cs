@@ -96,7 +96,7 @@ public class CreateControllerEditorWindow : EditorWindow {
     {
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
-        GUILayout.Label("Generating a Cotnroller, first requried a Model:", GUILayout.ExpandWidth(true));
+        GUILayout.Label("Generating a Controller, first requried a Model:", GUILayout.ExpandWidth(true));
 		GUILayout.Button("Generate Model");
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();

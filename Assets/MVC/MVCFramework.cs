@@ -6,20 +6,21 @@ using UnityEngine;
 namespace MVC {
 
     [RequireComponent(typeof(Canvas))]
+    [RequireComponent(typeof(ServiceInitializer))]
     public class MVCFramework : MonoBehaviour{
 
-        public List<MonoBehaviour> Views = new List<MonoBehaviour>();
-        public List<MonoBehaviour> Controllers = new List<MonoBehaviour>();
+        private List<IView> _views = new List<IView>();
+        private List<IController> _controllers = new List<IController>();
 
         ServiceLoader _services = new ServiceLoader();
 
         public void Initialize<FirstController>() where FirstController : IController 
         {
 
-            if (Controllers.Any())
-                Controllers.Clear();
-            if (Views.Any())
-                Views.Clear();
+            if (_controllers.Any())
+                _controllers.Clear();
+            if (_views.Any())
+                _views.Clear();
 
             ConnectMVC();
             DeliverServices<FirstController>();
@@ -27,7 +28,8 @@ namespace MVC {
 
         public MVCFramework RegisterService<T>(object service) {
             if (_services.CheckServiceRegistered<T>())
-                throw new Exception("A service for " + typeof(T).FullName + " is already registered");
+                throw new Exception("Services should be Singletons."+
+                    " A service for " + typeof(T).FullName + " is already registered");
             _services.RegisterService(typeof(T), service);
             return this;
         }
@@ -39,45 +41,74 @@ namespace MVC {
         }
 
         void ConnectMVC()  {
-            
-            var behaviours = gameObject.GetComponentsInChildren(typeof(MonoBehaviour), true);
-            foreach (MonoBehaviour b in behaviours) {
-                if (b.GetType().GetInterfaces().Contains(typeof(IController))) 
-                    Controllers.Add(b);
-                if (b.GetType().GetInterfaces().Contains(typeof(IView)))
-                    Views.Add(b);
+            _controllers.AddRange(GetComponentsInChildren<IController>(true));
+            _views.AddRange(GetComponentsInChildren<IView>(true));
+
+            foreach (var v in _views){
+                try{
+                    v.Initialise(this);
+                }catch(MissingComponentException ex){
+                    throw new MissingComponentException(
+                        v.GetType().Name + " could not find it's controller", ex);   
+                }
             }
 
             HideViews();
-
-        }
-        
-        internal void HideViews() {
-            foreach (MonoBehaviour v in Views)
-                v.gameObject.SetActive(false);
         }
 
         void DeliverServices<C>() where C : IController {
-            foreach (IController c in Controllers) {
+            foreach (IController c in _controllers) {
                 c.LoadFramework(this);
                 c.LoadServices(_services);
                 if (c is C) {
-
-                    var method = typeof(C).GetMethod("Main");
-                    if (method == null)
-                        throw new MissingMethodException(
-                            "Main method not found on StartUp Controller" +
-                            typeof(C).FullName + "." +
-                            " Failed to Deliver Services.");
-
-                    method.Invoke((c as IController), null);
+                    var firstController = (c as IController);
+                    firstController.Display();
                 }
             }
             _services.ClearServices();
         }
+
+        internal IController GetController<C>() where C : IController
+        {
+            var type = typeof(C);
+            var controller = _controllers.FirstOrDefault(c => c.GetType().IsAssignableFrom(type));
+
+            if (controller == null)
+                throw new MissingComponentException(
+                    "Controller " + type.FullName +
+                    " not found.");
+
+            return controller;
+        }
+
+        internal IView GetView<V>() where V : IView
+        {
+            var type = typeof(V);
+            var view = _views.FirstOrDefault(v => v.GetType().IsAssignableFrom(type));
+
+            if (view == null)
+                throw new MissingComponentException(
+                    "View " + type.FullName +
+                    " not found.");
+
+            return view;
+        }
+
+        internal void HideActiveViews ()
+        {
+            foreach (var v in _views)
+                if (!v.IsPartial)
+                    v.Hide();
+        }
+
+        internal void HideViews()
+        {
+            foreach (var v in _views)
+                v.Hide();
+        }
     }
 
-    class ServiceLoader : IServicesLoader {
+    class ServiceLoader : IServiceLoader {
         private static Dictionary<Type, object> Services = new Dictionary<Type, object>();
         private const string MISSING_SERVICE_LOG = "No service was registered for {0}.";
 
@@ -106,6 +137,5 @@ namespace MVC {
         internal bool CheckServiceRegistered<T>() {
             return Services.ContainsKey(typeof(T));
         }
-    }
-    
+    }   
 }

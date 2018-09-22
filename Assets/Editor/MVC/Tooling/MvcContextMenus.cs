@@ -12,7 +12,7 @@ public class MvcContextMenus : MonoBehaviour {
 
 	[MenuItem("GameObject/UI/MVC/View")]
 	static void CreateView(){
-		UnityEngine.Debug.Log("Show View Creation menu here.");
+		CreateViewEditorWindow.Display();
 	}
 
 

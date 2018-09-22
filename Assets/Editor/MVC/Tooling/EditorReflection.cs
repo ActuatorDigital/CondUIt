@@ -23,6 +23,13 @@ public static class EditorReflection{
         return types.ToList(); 
     }
 
+    internal static List<Type> GetControllerTypes()
+    {
+        return GetDomainTypes<IController>()
+            .Where( c => !c.IsInterface & !c.IsAbstract)
+            .ToList();
+    }
+
     public static List<Type> GetModelTypes(){
         return GetDomainTypes<IModel>()
 				.Where( t => !t.IsInterface && !t.IsAbstract )

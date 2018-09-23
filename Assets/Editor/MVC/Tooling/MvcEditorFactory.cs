@@ -24,19 +24,50 @@ public class MvcEditorFactory {
 
         controllerGo.AddComponent(type);
     }
+
+    public static void AddViewToController(string controller, string view){
+        Debug.Log("AddViewToController");
+    }
     
-    public static void AddControllerToSolution(string className, string generatedText){
-
+    public static void AddControllerToSolution(string className, string controllerCodeText)
+    {
         var controllerFolder = "./Assets/Controllers";
-        if(!Directory.Exists(controllerFolder))
-            Directory.CreateDirectory(controllerFolder);
+        var fileName = SanatizeModelName(className) + "Controller.cs";
+        GenerateFileForCode(controllerFolder, fileName, controllerCodeText);    
+    }
 
-        var controllerPath = controllerFolder + "/" + className + "Controller.cs";
-        if(!File.Exists(controllerPath))
-            File.WriteAllText(controllerPath, generatedText);
+    public static void AddModelToSolution(string modelName, string modelCodeText)
+    {
+        var modelFolder = "./Assets/Models";
+        var fileName = SanatizeModelName(modelName) + "Model.cs";
+        GenerateFileForCode(modelFolder, fileName, modelCodeText);
+    }
+
+    public static void AddViewToSolution(string viewName, string viewCodeText)
+    {
+        var modelFolder = "./Assets/Views";
+        var fileName = SanatizeModelName(viewName) + "View.cs";
+        GenerateFileForCode(modelFolder, fileName, viewCodeText);
+    }
+
+    static string SanatizeModelName(string model){
+        return MvcCodeGeneration.CamelCaseSentence(model);
+    }
+
+    public static void GenerateFileForCode(
+        string folder, 
+        string fileName,
+        string code
+    ) {
+        if(!Directory.Exists(folder))
+            Directory.CreateDirectory(folder);
+
+        var codeFilePath = folder + "/" + fileName;
+        if(!File.Exists(codeFilePath))
+            File.WriteAllText(codeFilePath, code);
 
         AssetDatabase.Refresh();
-        AssetDatabase.LoadAllAssetsAtPath(controllerPath);
+        AssetDatabase.LoadAllAssetsAtPath(codeFilePath);
     }
 
     static MVCFramework GetFramework(){

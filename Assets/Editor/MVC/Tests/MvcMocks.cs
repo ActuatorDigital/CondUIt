@@ -8,7 +8,7 @@ public class TestExclusiveControllerOne : Controller<TestModel> {
         get { return true; }
     }
 
-    // public override void Display() { }
+    public override void Display() { }
 
     public override void LoadServices(IServicesLoader services) { }
 }
@@ -18,7 +18,7 @@ public class TestExclusiveControllerTwo : Controller<TestModel> {
         get { return true; }
     }
 
-    // public override void Display() { }
+    public override void Display() { }
     public void FunctionOnControllerTwo() { }
 
     public override void LoadServices(IServicesLoader services) { }
@@ -48,7 +48,7 @@ public class TestControllerOne : Controller<TestModel> {
         get { return false; }
     }
 
-    // public override void Display() {}
+    public override void Display() {}
 
     public void ChangeTestStr(string test) {
         TestString = test;
@@ -64,7 +64,7 @@ public class TestControllerTwo : Controller<TestModel> {
         get { return false; }
     }
 
-    // public override void Display() { }
+    public override void Display() { }
 
     public override void LoadServices(IServicesLoader services) { }
 

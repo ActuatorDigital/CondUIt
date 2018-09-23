@@ -7,15 +7,17 @@ using System;
 using MVC;
 using System.IO;
 
-public class CreateControllerEditorWindow : EditorWindow {
+public partial class CreateControllerEditorWindow : RecompileEditorWindow {
+
+	int _selectedPopupIndex = 0;
+	bool _exclusive = true;
+
+    int _selectedModelIndex = 0;
+    int _selectedControllerIndex = 0;
 
 	string _controllerName = "";
 
-	bool _generatingController = false;
-
-	int _selectedPopupIndex = 0;
 	List<Type> _modelTypes;
-	bool __exclusive = false;
 
 	private string SelectedModelStr {
 		get {
@@ -35,8 +37,43 @@ public class CreateControllerEditorWindow : EditorWindow {
 	}
 
 	public static void Display() {
-		var window = GetWindow<CreateControllerEditorWindow>("Add Controller");
+		var window = GetWindow<CreateControllerEditorWindow>(
+            "Add Controller", true,
+            typeof(CreateViewEditorWindow),
+            typeof(CreateModelEditorWindow) );
+
 		window.minSize = window.maxSize =new Vector2(490,250);
+
+	}
+
+    /// <summary>
+    /// Adds newly compiled controller to scene.
+    /// </summary>
+	void AddControllerToScene(){
+        UnityEngine.Debug.Log("CreateControllerEditorWindow AddControllerToScene");
+		MvcEditorFactory.AddControllerToScene(
+			SelectedModelStr,
+			SelectedControllerStr );
+	}
+
+    private void DrawGenerateControllerButton(string controllerCode)
+    {
+        if (GUILayout.Button("Generate Controller"))
+        {
+            MvcEditorFactory.AddControllerToSolution(
+                SelectedControllerStr,
+                controllerCode );
+            GeneratingController = true;
+        }
+    }
+
+	void OnEnable(){
+		_modelTypes = EditorReflection.GetModelTypes();
+		OnRecompileComplete += AddControllerToScene; 
+	}
+
+	void OnDisable(){
+		OnRecompileComplete -= AddControllerToScene;
 	}
 
 	void OnGUI()
@@ -46,15 +83,14 @@ public class CreateControllerEditorWindow : EditorWindow {
 
         DrawNameInput();
         DrawInputRow();
-        
-		string generatedText = DrawGeneratedText();
+		string controllerCode = DrawGeneratedText();
  
         GUILayout.Space(10);
 
         if (!_modelTypes.Any())
             DrawCreateModelFirstMessage();
-        else if (!_generatingController)
-            DrawGenerateControllerButton(generatedText);
+        else if (!GeneratingController)
+            DrawGenerateControllerButton(controllerCode);
         else
             DrawGeneratingControllerMessage();
 
@@ -69,35 +105,29 @@ public class CreateControllerEditorWindow : EditorWindow {
 
     private void DrawExclusiveInput()
     {
-        __exclusive = GUILayout.Toggle(__exclusive, "Exclude others when activated.");
+        _exclusive = GUILayout.Toggle(_exclusive, "Exclude others when activated.");
     }
 
     private void DrawGeneratingControllerMessage()
     {
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
-        GUILayout.Label("Adding " + SelectedControllerStr + "Controller...", GUILayout.ExpandWidth(true));
+        GUILayout.Label(
+            "Adding " + SelectedControllerStr + "Controller...", 
+            GUILayout.ExpandWidth(true) );
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
-    }
-
-    private void DrawGenerateControllerButton(string generatedText)
-    {
-        if (GUILayout.Button("Create"))
-        {
-            MvcEditorFactory.AddControllerToSolution(
-                SelectedControllerStr,
-                generatedText);
-            _generatingController = true;
-        }
     }
 
     private static void DrawCreateModelFirstMessage()
     {
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
-        GUILayout.Label("Generating a Controller, first requried a Model:", GUILayout.ExpandWidth(true));
-		GUILayout.Button("Generate Model");
+        GUILayout.Label(
+            "Generating a Controller, first requries a Model:", 
+            GUILayout.ExpandWidth(true) );
+		if(GUILayout.Button("Generate Model"))
+            CreateModelEditorWindow.Display();
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
     }
@@ -105,20 +135,24 @@ public class CreateControllerEditorWindow : EditorWindow {
     private string DrawGeneratedText()
     {
 		GUILayout.BeginVertical("Box");
-        var generatedText = MvcCodeGeneration.GenerateControllerTemplate(SelectedModelStr, SelectedControllerStr);
+        var generatedText = MvcCodeGeneration
+            .GenerateControllerTemplate(
+                SelectedModelStr, 
+                SelectedControllerStr,
+                _exclusive
+            );
         foreach (var line in generatedText.Split('\n'))
-            GUILayout.Label(line);
+            GUILayout.Label(line.Replace("\t", "    "));
 		GUILayout.EndVertical();
         return generatedText;
     }
 
     private void DrawModelInput()
     {
-        _selectedPopupIndex = EditorGUILayout.Popup(
-                    "Select Model",
+        _selectedPopupIndex = EditorGUILayout
+            .Popup( "Select Model",
                     _selectedPopupIndex,
-                    _modelTypes.Select(m => m.FullName).ToArray()
-                );
+                    _modelTypes.Select(m => m.FullName).ToArray() );
     }
 
     private void DrawNameInput()
@@ -129,25 +163,6 @@ public class CreateControllerEditorWindow : EditorWindow {
         GUILayout.EndHorizontal();
     }
 
-    private void OnEnable() {
-		_modelTypes = EditorReflection.GetModelTypes();
-		EditorApplication.update += Update;
-	}
-
-	private void OnDisable() {
-		EditorApplication.update -= Update;	
-	}
-
-	void Update(){
-
-		if(!_generatingController && !EditorApplication.isCompiling) return;
-
-		if(!EditorApplication.isCompiling) _generatingController = false;
-
-		if(!EditorApplication.isCompiling)
-			MvcEditorFactory.AddControllerToScene(SelectedModelStr, SelectedControllerStr);
-
-	}
 
 
 }

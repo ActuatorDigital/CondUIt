@@ -18,7 +18,7 @@ public class MvcContextMenus : MonoBehaviour {
 
 	[MenuItem("GameObject/UI/MVC/Model")]
 	static void CreateModel(){
-		UnityEngine.Debug.Log("Show Model Creation menu here.");
+		CreateModelEditorWindow.Display();
 	}
 
 }

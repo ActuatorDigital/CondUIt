@@ -13,7 +13,7 @@ namespace MVC {
 
         public abstract void LoadServices(IServicesLoader services);
 
-        // public abstract void Display();
+        public abstract void Display();
 
         public void LoadFramework(MVCFramework framework) {
             _framework = framework;

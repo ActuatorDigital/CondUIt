@@ -47,12 +47,14 @@ public partial class CreateModelEditorWindow : RecompileEditorWindow {
 
     private void DrawGenerateControllerButton(string modelCode)
     {
+        GUILayout.Space(10);
         if (GUILayout.Button("Generate Model")){
             MvcEditorFactory.AddModelToSolution(
                 _modelName,
                 modelCode );
             GeneratingController = true;
         }
+        GUILayout.Space(10);
     }
 
     private void DrawModelParentSelection()

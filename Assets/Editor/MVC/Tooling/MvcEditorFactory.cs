@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class MvcEditorFactory {
 
-    public static void AddControllerToScene(string modelName, string className){
+    public static void AddControllerToScene(
+        // string modelName, 
+        string className
+    ){
         
         // UnityEngine.Debug.Log("Create a new controller " + className + " bound to model " + modelName);
 

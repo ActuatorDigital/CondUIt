@@ -4,6 +4,43 @@ using UnityEngine;
 
 namespace MVC {
 
+    public abstract class Controller<M> : 
+        Controller where M : IModel {
+
+        IModel _context;
+        public M Context {
+            get {
+                try {
+                    return (M)_context;
+                } catch (InvalidCastException) {
+                    var message = GetType().FullName + " given context " +
+                        "of type " + _context.GetType().FullName + " but " +
+                        "requires a object of type " + typeof(M).FullName + ".";
+                    throw new InvalidCastException(message);
+                }
+            }
+            set { _context = value as IModel; }
+        }
+
+        public C Redirect<C>(
+            IModel context
+            // params object[] args
+        ) where C : class, IController {
+
+            var targetController = _framework.GetController<C>();
+            if(!targetController.GetType().IsSubclassOf(GetType()))
+                targetController.GetType().GetMethod("Init").Invoke(context, null);
+
+            base.Redirect<C>();
+            return targetController as C;
+        }
+
+        public void Init(IModel context) {
+            _context = context;
+        }
+
+    }
+
     public abstract class Controller :
             MonoBehaviour, IController {
 

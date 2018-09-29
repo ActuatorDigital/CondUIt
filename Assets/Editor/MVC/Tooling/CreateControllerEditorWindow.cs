@@ -11,6 +11,7 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
 
 	int _selectedPopupIndex = 0;
 	bool _exclusive = true;
+    bool _modelBound = false;
 
     int _selectedModelIndex = 0;
     int _selectedControllerIndex = 0;
@@ -22,7 +23,7 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
 	private string SelectedModelStr {
 		get {
 			var selectedModel = _modelTypes.Any() ? 
-				_modelTypes[_selectedPopupIndex].FullName : 
+				_modelTypes[_selectedPopupIndex].Name :  
 				string.Empty; 
 			return selectedModel;
 		}
@@ -42,7 +43,7 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
             typeof(CreateViewEditorWindow),
             typeof(CreateModelEditorWindow) );
 
-		window.minSize = window.maxSize =new Vector2(490,250);
+		window.minSize = window.maxSize = new Vector2(490,250);
 
 	}
 
@@ -52,7 +53,7 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
 	void AddControllerToScene(){
         UnityEngine.Debug.Log("CreateControllerEditorWindow AddControllerToScene");
 		MvcEditorFactory.AddControllerToScene(
-			SelectedModelStr,
+			// SelectedModelStr,
 			SelectedControllerStr );
 	}
 
@@ -80,14 +81,13 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
     {
 		
         GUILayout.Space(10);
-
-        DrawNameInput();
         DrawInputRow();
+        DrawNameInput();
 		string controllerCode = DrawGeneratedText();
  
         GUILayout.Space(10);
 
-        if (!_modelTypes.Any())
+        if (!_modelTypes.Any() && _modelBound)
             DrawCreateModelFirstMessage();
         else if (!GeneratingController)
             DrawGenerateControllerButton(controllerCode);
@@ -99,14 +99,8 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
 	private void DrawInputRow(){
 		GUILayout.BeginHorizontal();
 		DrawModelInput();
-		DrawExclusiveInput();
 		GUILayout.EndHorizontal();
 	}
-
-    private void DrawExclusiveInput()
-    {
-        _exclusive = GUILayout.Toggle(_exclusive, "Exclude others when activated.");
-    }
 
     private void DrawGeneratingControllerMessage()
     {
@@ -139,7 +133,8 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
             .GenerateControllerTemplate(
                 SelectedModelStr, 
                 SelectedControllerStr,
-                _exclusive
+                _exclusive,
+                _modelBound
             );
         foreach (var line in generatedText.Split('\n'))
             GUILayout.Label(line.Replace("\t", "    "));
@@ -149,10 +144,14 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
 
     private void DrawModelInput()
     {
-        _selectedPopupIndex = EditorGUILayout
-            .Popup( "Select Model",
-                    _selectedPopupIndex,
-                    _modelTypes.Select(m => m.FullName).ToArray() );
+        if(_modelBound){
+            _selectedPopupIndex = EditorGUILayout
+                .Popup( "Select Model",
+                        _selectedPopupIndex,
+                        _modelTypes.Select(m => m.FullName).ToArray(),
+                        GUILayout.ExpandWidth(true) );
+        }
+        _exclusive = GUILayout.Toggle(_exclusive, "Exclude others when activated.", GUILayout.ExpandWidth(true));
     }
 
     private void DrawNameInput()
@@ -160,6 +159,7 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
         GUILayout.BeginHorizontal();
         GUILayout.Label("Enter name for controller", GUILayout.ExpandWidth(false));
         _controllerName = GUILayout.TextField(_controllerName, GUILayout.ExpandWidth(true));
+        _modelBound = GUILayout.Toggle(_modelBound, "Has Model", GUILayout.ExpandWidth(false));        
         GUILayout.EndHorizontal();
     }
 

@@ -9,14 +9,14 @@ public class MvcCodeGeneration {
 	public static string GenerateControllerTemplate(
 		string modelTypeStr, 
 		string classNameStr, 
-		bool exclusive
-	) {
-		
+		bool exclusive,
+		bool modelBound
+	) { 
 		classNameStr = CamelCaseSentence(classNameStr);
 		string generatedController = 
-			"using MVC;\n\n" + 
+			"using MVC;\n"+(modelBound ? "using Models;" : "")+"\n" + 
 			"namespace Controllers {\n" +
-			"\tpublic class " + classNameStr + "Controller : Controller<" + modelTypeStr + "> {\n" +
+			"\tpublic class " + classNameStr + "Controller : Controller" + (modelBound ? "<" + modelTypeStr + ">" : "") + " {\n" +
 			"\t\tpublic override bool Exclusive { get { return " + (exclusive ? "true" : "false")+ "; } }\n" +
 			"\t\tpublic override void LoadServices(IServiceLoader services) { }\n" +
 			"\t\tpublic override void Display() { }\n" +
@@ -66,12 +66,13 @@ public class MvcCodeGeneration {
 			( isModelRoot ? "Root" : "" ) + 
 			( isModelRoot ? "" : "<" + modelParent + ">" );
 		var modelCodeStr = 
-			"\n\n" +
+			"\n"+
+			(isModelRoot ? "\n" : "") +
 		 	"using MVC;\n\n" +  
 			"namespace Models {\n" + 
 			"\tpublic class " + modelName + " : " + modelExt + " {\n\n" + 
 			"\t}\n" + 
-			"}\n\n";
+			"}\n";
 
         return modelCodeStr;
     }

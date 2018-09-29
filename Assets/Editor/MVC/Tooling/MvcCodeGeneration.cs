@@ -14,7 +14,8 @@ public class MvcCodeGeneration {
 	) { 
 		classNameStr = CamelCaseSentence(classNameStr);
 		string generatedController = 
-			"using MVC;\n"+(modelBound ? "using Models;" : "")+"\n" + 
+			"using MVC;\n"+
+			(modelBound ? "using Models;" : "")+"\n" + 
 			"namespace Controllers {\n" +
 			"\tpublic class " + classNameStr + "Controller : Controller" + (modelBound ? "<" + modelTypeStr + ">" : "") + " {\n" +
 			"\t\tpublic override bool Exclusive { get { return " + (exclusive ? "true" : "false")+ "; } }\n" +
@@ -43,9 +44,11 @@ public class MvcCodeGeneration {
 
 		string viewModelName = purpose + "ViewModel";
 		string generatedCode =  
-			"using MVC;\n\n" + 
-			"namespance Views {\n" + 
-						"\tpublic class " + purpose + "View : View<" + viewModelName + ", " + controllerName + "> {\n" + 
+			"using MVC;\n" + 
+			"using Controllers;\n" + 
+			"namespace Views {\n" + 
+			"\tpublic class " + purpose + "View : View<" + viewModelName + ", " + controllerName + "> {\n" + 
+			"\t\tpublic override bool IsPartial { get { return false; } }\n"+
 			"\t\tprotected override void LoadElements() {}\n" + 
 			"\t\tprotected override void ClearElements() {}\n" +
 			"\t}\n"+

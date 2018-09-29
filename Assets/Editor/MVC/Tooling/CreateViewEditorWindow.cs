@@ -22,7 +22,6 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
     
     public static void Display() 
     {
-        UnityEngine.Debug.Log("CreateViewEditorWindow");
         var window = GetWindow<CreateViewEditorWindow>(
             "Add View", true,
             typeof(CreateControllerEditorWindow),
@@ -33,7 +32,6 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
     void OnEnable() 
     {
         _controllerTypes = EditorReflection.GetControllerTypes();
-        OnRecompileComplete += AddViewToController;
     }
 
     void OnDisable(){
@@ -43,20 +41,22 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
     void AddViewToController() 
     {
         var controller = _controllerTypes[_selectedControllerIndex];
-        UnityEngine.Debug.Log("Add View with parent controller " + controller);
+        MvcEditorFactory.AddViewToController(controller.FullName, _viewName);
+        OnRecompileComplete -= AddViewToController;
+        // UnityEngine.Debug.Log("Add View with parent controller " + controller);
     }
 
 #region UI
     void OnGUI()
     {
 
-        GUILayout.Space(13);
+        GUILayout.Space(8);
 
         DrawControllerSelectDropdown();
         DrawViewNameInputField();
         var viewCode = DrawGeneratedText();
 
-        GUILayout.Space(8);
+        // GUILayout.Space(8);
 
         if(!_controllerTypes.Any())
             DrawCreateControllerFirstMessage();
@@ -121,8 +121,14 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
 
     private void DrawGenerateViewButton(string viewCode) 
     {
-        if(GUILayout.Button("Generate View"))
-            UnityEngine.Debug.Log("Generate View!");
+        if(GUILayout.Button("Generate View")){
+            MvcEditorFactory.AddViewToSolution(
+                _viewName,
+                viewCode );
+            GeneratingController = true;
+            OnRecompileComplete += AddViewToController;
+        }
+            
     }
 
 #endregion

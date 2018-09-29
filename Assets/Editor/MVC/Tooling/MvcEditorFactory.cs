@@ -29,7 +29,8 @@ public class MvcEditorFactory {
     }
 
     public static void AddViewToController(string controller, string view){
-        Debug.Log("AddViewToController");
+        UnityEngine.Debug.Log("Add View with parent controller " + controller);
+        
     }
     
     public static void AddControllerToSolution(string className, string controllerCodeText)

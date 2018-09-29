@@ -1,7 +1,6 @@
 ﻿
 namespace MVC {
-
-    public interface IServicesLoader {
+    public interface IServiceLoader {
         T GetService<T>();
     }
 

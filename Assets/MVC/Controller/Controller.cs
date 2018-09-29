@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace MVC {
 
-    public abstract class Controller<M> :
+    public abstract class Controller :
             MonoBehaviour, IController {
 
         internal MVCFramework _framework;
 
         public abstract bool Exclusive { get; }
 
-        public abstract void LoadServices(IServicesLoader services);
+        public abstract void LoadServices(IServiceLoader services);
 
         public abstract void Display();
 
@@ -19,72 +19,34 @@ namespace MVC {
             _framework = framework;
         }
 
-        public C Action<C>(
-                // string action,
-                // params object[] args
-                ) where C : class, IController {
+        public C Redirect<C>(/*IModel context*/) where C : class, IController {
+            CheckFrameworkInitialized(); 
+            var targetController = _framework.GetController<C>();
 
-            CheckFrameworkInitialized();
+            if(targetController.Exclusive)
+                _framework.HideViews(); 
 
-            Type controllerType = typeof(C);
-            return ActivateController(controllerType) as C;
+            // foreach(var view in _framework.GetViewsForController<C>())
+            //     view.Render();
 
-            // if (controller == null)
-            //     throw new MissingComponentException(
-            //         "Controller " + controllerType.GetType().FullName +
-            //         " not found. Failed to Call action " + action + ".");
+            // targetController.Init(context);
+            targetController.Display();
 
-            // var method = controllerType.GetMethod(action);
-            // if (method == null)
-            //     throw new MissingMethodException(
-            //         "Action " + action + " not found on " +
-            //         controllerType.GetType().FullName + "." +
-            //         " Failed to call action " + action + ".");
-            
-            // method.Invoke(controller, args);
-
-        }
-
-        private MonoBehaviour ActivateController(Type controllerType) {
-            var controller = _framework.Controllers.FirstOrDefault(
-                c => c.GetType().IsAssignableFrom(controllerType));
-            if ((controller as IController).Exclusive)
-                _framework.HideViews();
-            var controllerViews = controller.gameObject
-                .GetComponentsInChildren<MonoBehaviour>()
-                .Where(v => v is IView);
-            foreach (var view in controllerViews)
-                view.gameObject.SetActive(true);
-            return controller;
+            return targetController as C;
         }
 
         public void View<V>(object viewModel = null) where V : IView {
             CheckFrameworkInitialized();
+            var view = _framework.GetView<V>();
 
-            Type viewType = typeof(V);
+            if(!view.IsPartial)
+                _framework.HideActiveViews();
 
-            bool found = false;
-            foreach (MonoBehaviour mbView in _framework.Views) {
-                if (mbView.GetType().IsAssignableFrom(viewType)) {
-                    var view = (mbView as IView);
-                    view.ViewModel = viewModel;
-                    mbView.gameObject.SetActive(true);
-                    view.Render();
-                    found = true;
-                } else {
-                    // TODO: Handling of partial views.
-                    mbView.gameObject.SetActive(false);
-                }
-            }
-
-            if(!found)
-                throw new MissingComponentException(
-                    "Failed to Display " + viewType.FullName +
-                    ", View not found.");
-
+            view.ViewModel = viewModel;
+            view.Render();
         }
 
-        void CheckFrameworkInitialized() {
+        protected void CheckFrameworkInitialized() {
             if (_framework == null)
                 throw new TypeInitializationException(
                     typeof(MVCFramework).FullName,
@@ -102,5 +64,42 @@ namespace MVC {
             }
         }
     }
+
+    // public abstract class Controller<M> : Controller  {
+        
+    //     IModel _context;
+    //     public M Context {
+    //         get {
+    //             try {
+    //                 return (M)_context;
+    //             } catch (InvalidCastException) {
+    //                 var message = GetType().FullName + " given context " +
+    //                     "of type " + _context.GetType().FullName + " but " +
+    //                     "requires a object of type " + typeof(M).FullName + ".";
+    //                 throw new InvalidCastException(message);
+    //             }
+    //         }
+    //         set { _context = value as IModel; }
+    //     }
+
+    //     public C Redirect<C>(
+    //         IModel context
+    //         // params object[] args
+    //     ) where C : class, IController {
+
+    //         var targetController = _framework.GetController<C>();
+    //         if(!targetController.GetType().IsSubclassOf(GetType()))
+    //             targetController.GetType().GetMethod("Init").Invoke(context, null);
+
+    //         base.Redirect<C>();
+    //         return targetController as C;
+    //     }
+
+    //     public void Init(IModel context) {
+    //         _context = context;
+    //     }
+
+
+    // }
     
 }

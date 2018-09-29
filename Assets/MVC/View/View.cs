@@ -23,40 +23,14 @@ namespace MVC {
             set { ViewModel = value; }
         }
 
-        private void Awake() {
-            ConnectMVC();
+        public void Initialise (MVCFramework mvc)
+        {
+            _controller = mvc.GetController<C>();
 
             if (_transitionHandlers == null || !_transitionHandlers.Any())
                 _transitionHandlers = new TransitionHandler[] {
                     gameObject.AddComponent<OnOffTransition>()
                 };
-        }
-
-        private IController GetController(GameObject go) {
-            return go.GetComponent<C>() as IController;
-        }
-
-        public void ConnectMVC() {
-            _controller = FindParentController();
-            if (Controller == null)
-                throw new MissingComponentException(
-                    GetType().FullName + " could not find" +
-                    " it's controller " + typeof(C).FullName +
-                    " on GameObject " + gameObject.name +
-                    " or on " + gameObject.transform.parent.name + "."
-                );
-        }
-
-        public IController FindParentController() {
-            IController controller;
-            var searchTarget = gameObject;
-            do {
-                controller = GetController(searchTarget);
-                if (controller == null)
-                    searchTarget = searchTarget.transform.parent.gameObject;
-            } while (controller == null && searchTarget.transform.parent != null);
-
-            return controller;
         }
 
         public void Render() {
@@ -68,7 +42,9 @@ namespace MVC {
         public void Hide() {
             foreach (var handler in _transitionHandlers)
                 handler.OnHide();
-            ClearElements();
+
+            if(ViewModel != null)
+                ClearElements();
         }
 
         protected abstract void LoadElements();

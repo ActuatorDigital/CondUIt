@@ -18,7 +18,7 @@ public class MvcCodeGeneration {
 			"namespace Controllers {\n" +
 			"\tpublic class " + classNameStr + "Controller : Controller<" + modelTypeStr + "> {\n" +
 			"\t\tpublic override bool Exclusive { get { return " + (exclusive ? "true" : "false")+ "; } }\n" +
-			"\t\tpublic override void LoadServices(IServicesLoader services) { }\n" +
+			"\t\tpublic override void LoadServices(IServiceLoader services) { }\n" +
 			"\t\tpublic override void Display() { }\n" +
 			"\t}\n" +
 			"}";

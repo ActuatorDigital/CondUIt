@@ -19,10 +19,24 @@ public class MvcEditorFactory {
         }
 
         var framework = GetFramework();
+        ConfigureCanvas(framework);
         var controllerGo = new GameObject(typeStr);
-        controllerGo.transform.parent = framework.gameObject.transform;
+        controllerGo.transform.SetParent(framework.gameObject.transform, true);
 
         controllerGo.AddComponent(type);
+        var rt = controllerGo.GetComponent<RectTransform>();
+        FullScaleRectTransform(rt);
+    }
+
+    static void ConfigureCanvas(MVCFramework framework)
+    {
+        var canvas = framework.GetComponent<Canvas>();
+        var camera = GameObject.FindObjectOfType<Camera>();
+        if(camera == null)
+            camera = new GameObject("Main Camera").AddComponent<Camera>();
+        
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        canvas.worldCamera = camera;
     }
 
     public static void AddViewToController(string controller, string view){
@@ -32,11 +46,13 @@ public class MvcEditorFactory {
         var controllerGo = GameObject.FindObjectOfType(controllerType);
 
         var viewGo = new GameObject(viewName);
-        viewGo.transform.parent = (controllerGo as Component).transform;
+        viewGo.transform.SetParent((controllerGo as Component).transform, true);
 
         var currentAssembly = EditorReflection.CurrentAssembly;
         var viewType = currentAssembly.GetType("Views."+viewName);
         viewGo.AddComponent(viewType);
+        var rt = viewGo.GetComponent<RectTransform>();
+        FullScaleRectTransform(rt);
     }
     
     public static void AddControllerToSolution(string className, string controllerCodeText)
@@ -58,7 +74,6 @@ public class MvcEditorFactory {
         var modelFolder = "./Assets/Views";
         var fileName = SanatizeModelName(viewName) + "View.cs";
         GenerateFileForCode(modelFolder, fileName, viewCodeText);
-        UnityEngine.Debug.Log("AddViewToSolution");
     }
 
     static string SanatizeModelName(string model){
@@ -68,6 +83,13 @@ public class MvcEditorFactory {
     static Type GetTypeForControllerStr(string controllerType){
         var currentAssembly = EditorReflection.CurrentAssembly;
         return currentAssembly.GetType(controllerType);
+    }
+
+    static void FullScaleRectTransform(RectTransform rt){
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.sizeDelta = Vector2.zero;
+        rt.localScale = Vector2.one;
     }
 
     public static void GenerateFileForCode(

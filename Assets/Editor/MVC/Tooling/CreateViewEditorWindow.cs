@@ -128,7 +128,6 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
                 _viewName,
                 viewCode );
             GeneratingController = true;
-            UnityEngine.Debug.Log("CreateViewEditorWindow DrawGenerateVeiwButton");
             _viewAddRequested = true;
         }
             

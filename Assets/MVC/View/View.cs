@@ -2,6 +2,8 @@
 using UnityEngine;
 
 namespace MVC {
+    [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(CanvasRenderer))]
     public abstract class View<M, C> :
         MonoBehaviour, IView
         where C : IController {

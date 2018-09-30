@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace MVC {
 
     [RequireComponent(typeof(Canvas))]
     [RequireComponent(typeof(ServiceInitializer))]
+    [RequireComponent(typeof(CanvasScaler))]
+    [RequireComponent(typeof(GraphicRaycaster))]
+    [RequireComponent(typeof(EventSystem))]
+    [RequireComponent(typeof(StandaloneInputModule))]
+    [RequireComponent(typeof(RectTransform))]
     public class MVCFramework : MonoBehaviour{
 
         private List<IView> _views = new List<IView>();

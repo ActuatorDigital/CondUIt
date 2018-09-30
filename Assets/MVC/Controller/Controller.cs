@@ -41,6 +41,7 @@ namespace MVC {
 
     }
 
+    [RequireComponent(typeof(RectTransform))]
     public abstract class Controller :
             MonoBehaviour, IController {
 

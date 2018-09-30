@@ -15,6 +15,7 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
 
     int _selectedModelIndex = 0;
     int _selectedControllerIndex = 0;
+    bool _controllerAddRequested = false;
 
 	string _controllerName = "";
 
@@ -49,6 +50,7 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
 
 	void OnEnable(){
 		_modelTypes = EditorReflection.GetModelTypes();
+        OnRecompileComplete += AddControllerToScene;        
         UnityEngine.Debug.Log("CreateControllerEditorWindow OnEnable");
 	}
 
@@ -61,11 +63,16 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
     /// Adds newly compiled controller to scene.
     /// </summary>
 	void AddControllerToScene(){
+        if(!_controllerAddRequested) return;
+            
+            // UnityEngine.Debug.Log("Add Controller requested");
+
         UnityEngine.Debug.Log("CreateControllerEditorWindow AddControllerToScene");
 		MvcEditorFactory.AddControllerToScene(
 			// SelectedModelStr,
 			SelectedControllerStr );
         OnRecompileComplete -= AddControllerToScene;
+        _controllerAddRequested = false;
 	}
 
     private void DrawGenerateControllerButton(string controllerCode)
@@ -76,7 +83,8 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
                 SelectedControllerStr,
                 controllerCode );
             GeneratingController = true;
-    		OnRecompileComplete += AddControllerToScene;        
+    		_controllerAddRequested = true;
+            UnityEngine.Debug.Log("DrawGenerateControllerButton " + (OnRecompileComplete == null) );
         }
     }
 

@@ -12,6 +12,8 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
     int _selectedControllerIndex = 0;
     bool _generateViewModel = true;
 
+    bool _viewAddRequested = false;
+
     string SelectedControllerName {
         get { 
             string selectedController = _controllerTypes.Any() ? 
@@ -32,18 +34,21 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
     void OnEnable() 
     {
         _controllerTypes = EditorReflection.GetControllerTypes();
+        OnRecompileComplete += AddViewToController;        
     }
 
     void OnDisable(){
         OnRecompileComplete -= AddViewToController;
+        UnityEngine.Debug.Log("CreateViewEditorWindow OnDisable");
     }
 
     void AddViewToController() 
     {
+        if(!_viewAddRequested) return;
         var controller = _controllerTypes[_selectedControllerIndex];
         MvcEditorFactory.AddViewToController(controller.FullName, _viewName);
         OnRecompileComplete -= AddViewToController;
-        // UnityEngine.Debug.Log("Add View with parent controller " + controller);
+        _viewAddRequested = false;
     }
 
 #region UI
@@ -126,7 +131,8 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
                 _viewName,
                 viewCode );
             GeneratingController = true;
-            OnRecompileComplete += AddViewToController;
+            UnityEngine.Debug.Log("CreateViewEditorWindow DrawGenerateVeiwButton");
+            _viewAddRequested = true;
         }
             
     }

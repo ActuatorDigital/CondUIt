@@ -17,12 +17,21 @@ public class RecompileEditorWindow : EditorWindow {
 
     private void Update()
     {
-		if(!GeneratingController && !EditorApplication.isCompiling) return;
+		if(!GeneratingController) 
+			return;
+		else {
+			if(!EditorApplication.isCompiling){
+				GeneratingController = false;
+				UnityEngine.Debug.Log("RecompileEditorWindow isCompiling");
+				if(OnRecompileComplete != null){
+					UnityEngine.Debug.Log("RecompileEditorWindow OnRecompileComplete");
+					OnRecompileComplete();
+				}else {
+					UnityEngine.Debug.Log("OnRecomplileComplete null");
+				}
+			}
 
-		if(!EditorApplication.isCompiling) GeneratingController = false;
+		}
 
-		if(!EditorApplication.isCompiling)
-            if(OnRecompileComplete != null)
-			    OnRecompileComplete();
     }
 }

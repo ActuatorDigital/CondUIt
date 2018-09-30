@@ -22,12 +22,8 @@ public class RecompileEditorWindow : EditorWindow {
 		else {
 			if(!EditorApplication.isCompiling){
 				GeneratingController = false;
-				UnityEngine.Debug.Log("RecompileEditorWindow isCompiling");
 				if(OnRecompileComplete != null){
-					UnityEngine.Debug.Log("RecompileEditorWindow OnRecompileComplete");
 					OnRecompileComplete();
-				}else {
-					UnityEngine.Debug.Log("OnRecomplileComplete null");
 				}
 			}
 

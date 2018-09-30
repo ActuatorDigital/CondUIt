@@ -7,15 +7,9 @@ using UnityEngine;
 public class MvcEditorFactory {
 
     public static void AddControllerToScene(
-        // string modelName, 
         string className
     ){
         
-        // UnityEngine.Debug.Log("Create a new controller " + className + " bound to model " + modelName);
-
-        // var currentAssembly = EditorReflection.CurrentAssembly;
-        // var typeName = "Controllers."+className+"Controller";
-        // var type = currentAssembly.GetType(typeName);
         var typeStr = className+"Controller";
         var fullTypeStr = "Controllers."+typeStr;
         var type = GetTypeForControllerStr(fullTypeStr);
@@ -24,7 +18,6 @@ public class MvcEditorFactory {
             return;
         }
 
-        // string fullClassName = typeStr;
         var framework = GetFramework();
         var controllerGo = new GameObject(typeStr);
         controllerGo.transform.parent = framework.gameObject.transform;
@@ -33,7 +26,6 @@ public class MvcEditorFactory {
     }
 
     public static void AddViewToController(string controller, string view){
-        UnityEngine.Debug.Log("Add View with parent controller " + controller + " view " + view );
 
         var viewName = view + "View";
         var controllerType = GetTypeForControllerStr(controller);

@@ -39,7 +39,6 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
 
     void OnDisable(){
         OnRecompileComplete -= AddViewToController;
-        UnityEngine.Debug.Log("CreateViewEditorWindow OnDisable");
     }
 
     void AddViewToController() 
@@ -60,8 +59,6 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
         DrawControllerSelectDropdown();
         DrawViewNameInputField();
         var viewCode = DrawGeneratedText();
-
-        // GUILayout.Space(8);
 
         if(!_controllerTypes.Any())
             DrawCreateControllerFirstMessage();

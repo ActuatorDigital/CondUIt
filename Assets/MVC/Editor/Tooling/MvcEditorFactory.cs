@@ -26,6 +26,8 @@ public class MvcEditorFactory {
         controllerGo.AddComponent(type);
         var rt = controllerGo.GetComponent<RectTransform>();
         FullScaleRectTransform(rt);
+
+        Selection.activeGameObject = controllerGo;
     }
 
     static void ConfigureCanvas(MVCFramework framework)
@@ -53,6 +55,8 @@ public class MvcEditorFactory {
         viewGo.AddComponent(viewType);
         var rt = viewGo.GetComponent<RectTransform>();
         FullScaleRectTransform(rt);
+
+        Selection.activeGameObject = viewGo;
     }
     
     public static void AddControllerToSolution(string className, string controllerCodeText)

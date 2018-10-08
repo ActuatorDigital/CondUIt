@@ -64,9 +64,12 @@ namespace MVC {
         }
 
         void DeliverServices<C>() where C : IController {
-            foreach (IController c in _controllers) {
-                c.LoadFramework(this);
+            foreach(IController c in _controllers){
                 c.LoadServices(_services);
+                c.LoadFramework(this);
+            }
+
+            foreach (IController c in _controllers) {
                 if (c is C) {
                     var firstController = (c as IController);
                     firstController.Display();
@@ -110,8 +113,13 @@ namespace MVC {
 
         internal void HideViews()
         {
-            foreach (var v in _views)
-                v.Hide();
+            foreach (var v in _views){
+                var controllerType = v.GetControllerType();
+                var controller = _controllers
+                    .First( c => c.GetType() == controllerType );
+                if(controller.Exclusive)
+                    v.Hide();
+            }
         }
     }
 

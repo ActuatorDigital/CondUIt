@@ -4,7 +4,8 @@ using System;
 using MVC;
 using System.Reflection;
 
-public static class EditorReflection{
+public static class EditorReflection 
+{
 
     public static Assembly CurrentAssembly {
         get{

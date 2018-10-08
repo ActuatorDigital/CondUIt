@@ -61,8 +61,8 @@ namespace MVC {
             CheckFrameworkInitialized(); 
             var targetController = _framework.GetController<C>();
 
-            if(targetController.Exclusive)
-                _framework.HideViews(); 
+            // if(targetController.Exclusive)
+            _framework.HideViews(); 
 
             // foreach(var view in _framework.GetViewsForController<C>())
             //     view.Render();

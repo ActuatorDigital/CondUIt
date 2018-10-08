@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 
 namespace MVC {
@@ -51,5 +52,10 @@ namespace MVC {
 
         protected abstract void LoadElements();
         protected abstract void ClearElements();
+
+        public Type GetControllerType()
+        {
+            return typeof(C);
+        }
     }
 }

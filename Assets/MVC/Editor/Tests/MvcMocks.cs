@@ -1,13 +1,22 @@
-﻿using MVC;
+﻿
+using MVC;
+using System;
+
 
 public class TestExclusiveControllerOne : Controller {
     public override bool Exclusive {
         get { return true; }
     }
 
-    public override void LoadServices(IServicesLoader services) { }
+    public override void Display() {
+        UnityEngine.Debug.LogWarning(
+            "TODO: Make this implicit "+
+            "through view generic type binding!");
+        View<TestExclusiveViewOne>(new TestModel(""));
+     }
 
-    public void Main() { }
+    public override void LoadServices(IServiceLoader services) { }
+
 }
 
 public class TestExclusiveControllerTwo : Controller {
@@ -15,15 +24,14 @@ public class TestExclusiveControllerTwo : Controller {
         get { return true; }
     }
 
+    public override void Display() { }
     public void FunctionOnControllerTwo() { }
 
-    public override void LoadServices(IServicesLoader services) { }
+    public override void LoadServices(IServiceLoader services) { }
 }
 
 public class TestExclusiveViewOne : View<TestModel, TestExclusiveControllerOne> {
-    public override bool IsPartial {
-        get { return false; }
-    }
+    public override bool IsPartial { get { return false; } } 
 
     protected override void ClearElements() { }
     protected override void LoadElements() {
@@ -31,10 +39,8 @@ public class TestExclusiveViewOne : View<TestModel, TestExclusiveControllerOne> 
     }
 }
 
-public class TestExclusiveViewTwo : View<TestModel, TestExclusiveControllerTwo> {
-    public override bool IsPartial {
-        get { return false; }
-    }
+public class TestExclusiveViewTwo : View<TestModel, TestExclusiveControllerOne> {
+    public override bool IsPartial { get { return false; } } 
 
     protected override void ClearElements() { }
     protected override void LoadElements() { }
@@ -48,39 +54,42 @@ public class TestControllerOne : Controller {
         get { return false; }
     }
 
+    public override void Display() {}
+
     public void ChangeTestStr(string test) {
         TestString = test;
     }
 
-    public override void LoadServices(IServicesLoader services) { }
-
-    public void Main() { }
+    public override void LoadServices(IServiceLoader services) { }
 }
 
 public class TestControllerTwo : Controller {
-    
+
+
     public override bool Exclusive {
         get { return false; }
     }
 
-    public override void LoadServices(IServicesLoader services) { }
+    public override void Display() { }
+
+    public override void LoadServices(IServiceLoader services) { }
 
     internal void TriggerAction(string postTest) {
-        Action<TestControllerOne>().ChangeTestStr(postTest);
+        Redirect<TestControllerOne>().ChangeTestStr(postTest);
     }
 }
 
 public class TestView : View<TestModel, TestControllerOne>
 {
-    public override bool IsPartial {
-        get { return true; }
-    }
+    public override bool IsPartial { get { return false; } }
 
-    protected override void ClearElements() {
+    protected override void ClearElements()
+    {
         gameObject.SetActive(false);
     }
 
-    protected override void LoadElements() {
+    protected override void LoadElements()
+    {
         gameObject.SetActive(true);
     }
 }

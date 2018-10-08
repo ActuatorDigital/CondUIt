@@ -48,6 +48,7 @@ namespace Services {
     }
 
     
+#if UNITY_EDITOR
     [CustomEditor(typeof(DebugService), true)]
     public class DebugEditor : Editor {
         public override void OnInspectorGUI(){
@@ -56,5 +57,6 @@ namespace Services {
             debugService.OnDebugGUI();
         }
     }
+#endif
 
 }

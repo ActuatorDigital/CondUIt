@@ -11,13 +11,14 @@ namespace MVC {
             var canvasGo = new GameObject();
             var mvc = canvasGo.AddComponent<MVCFramework>();
 
-            var controllerGoOne = new GameObject();
-            controllerGoOne.transform.parent = canvasGo.transform;
-            var controllerOne = controllerGoOne.AddComponent<TestExclusiveControllerOne>();
-            AddPeerViews(controllerGoOne.transform);
+            var controllerExOneGo = new GameObject();
+            controllerExOneGo.transform.parent = canvasGo.transform;
+            var controllerExOne = controllerExOneGo.AddComponent<TestExclusiveControllerOne>();
+            var controllerOne = new GameObject().AddComponent<TestControllerOne>();
+            AddPeerViews(controllerOne.transform);
 
             var viewGOOne = new GameObject().AddComponent<TestExclusiveViewOne>();
-            viewGOOne.transform.parent = controllerGoOne.transform;
+            viewGOOne.transform.parent = controllerExOneGo.transform;
 
             var initialString = "Test";
             var modelObj = new TestModel(initialString);
@@ -25,7 +26,7 @@ namespace MVC {
             mvc.Initialize<TestExclusiveControllerOne>();
 
             // Act - Call view from controller.
-            controllerOne.View<TestExclusiveViewOne>(modelObj);
+            controllerExOne.View<TestExclusiveViewOne>(modelObj);
 
             // Assert.
             Assert.AreNotEqual(modelObj.TestString, initialString);
@@ -35,6 +36,7 @@ namespace MVC {
         public void CanHideViews() {
             // Arrange.
             var canvasGo = new GameObject();
+            var mvc = canvasGo.AddComponent<MVCFramework>();
 
             var controllerGoOne = new GameObject();
             controllerGoOne.transform.parent = canvasGo.transform;
@@ -44,6 +46,8 @@ namespace MVC {
             var viewGo = new GameObject();
             var view = viewGo.AddComponent<TestView>();
             viewGo.transform.parent = controllerGoOne.transform;
+
+            mvc.Initialize<TestControllerOne>();
 
             // Act.
             view.Hide();
@@ -116,7 +120,7 @@ namespace MVC {
             var controllerGoOne = new GameObject();
             controllerGoOne.transform.parent = canvasGo.transform;
             var controllerOne = controllerGoOne.AddComponent<TestExclusiveControllerOne>();
-            AddPeerViews(controllerGoOne.transform);
+            // AddPeerViews(controllerGoOne.transform);
 
             var viewGOOne = new GameObject();
             viewGOOne.AddComponent<TestExclusiveViewOne>();
@@ -125,20 +129,20 @@ namespace MVC {
             // Arrange Second Controller and view.
             var controllerGoTwo = new GameObject();
             controllerGoTwo.transform.parent = canvasGo.transform;
-            controllerGoTwo.AddComponent<TestExclusiveControllerTwo>();
+            controllerGoTwo.AddComponent<TestControllerOne>();
             AddPeerViews(controllerGoTwo.transform);
             
             var viewGOTwo = new GameObject();
             viewGOTwo.AddComponent<TestExclusiveViewTwo>();
             viewGOTwo.transform.parent = controllerGoOne.transform;
 
-            mvc.Initialize<TestExclusiveControllerOne>();
+            mvc.Initialize<TestControllerOne>();
 
             // Act.
-            controllerOne.Action<TestExclusiveControllerTwo>().FunctionOnControllerTwo();
+            controllerOne.Redirect<TestExclusiveControllerOne>();
 
-            Assert.IsTrue(viewGOTwo.activeInHierarchy);
-            Assert.IsTrue(!viewGOOne.activeInHierarchy);
+            Assert.IsTrue(!viewGOTwo.activeInHierarchy);
+            Assert.IsTrue(viewGOOne.activeInHierarchy);
             
             GameObject.DestroyImmediate(canvasGo);
         }

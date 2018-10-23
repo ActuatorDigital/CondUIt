@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace MVC {
 
     [RequireComponent(typeof(Canvas))]
-    [RequireComponent(typeof(ServiceInitializer))]
+    [RequireComponent(typeof(DependencyInjection))]
     [RequireComponent(typeof(CanvasScaler))]
     [RequireComponent(typeof(GraphicRaycaster))]
     [RequireComponent(typeof(EventSystem))]

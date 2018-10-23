@@ -4,16 +4,16 @@ using UnityEditor;
 using UnityEngine;
 
 namespace Services {
-    public abstract class DebugService : MonoBehaviour {
+    public abstract class MockService : MonoBehaviour {
 
         [SerializeField]
         private float _loadingDelay = 0.5f;
 
         public virtual void OnDebugGUI(){}
 
-        public static T Create<T> () where T : DebugService, new() 
+        public static T Create<T> () where T : MockService, new() 
         {
-            var existingService = FindObjectOfType<DebugService>();
+            var existingService = FindObjectOfType<MockService>();
             var parentGO = existingService == null ? new GameObject("Debug Services") : 
                         existingService.transform.parent.gameObject;
 
@@ -49,11 +49,11 @@ namespace Services {
 
     
 #if UNITY_EDITOR
-    [CustomEditor(typeof(DebugService), true)]
+    [CustomEditor(typeof(MockService), true)]
     public class DebugEditor : Editor {
         public override void OnInspectorGUI(){
             DrawDefaultInspector();
-            var debugService = (DebugService)target;
+            var debugService = (MockService)target;
             debugService.OnDebugGUI();
         }
     }

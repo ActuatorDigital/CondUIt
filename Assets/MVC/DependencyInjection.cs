@@ -2,7 +2,8 @@
 using Services;
 using UnityEngine;
 
-public class ServiceInitializer : MonoBehaviour {
+[RequireComponent(typeof(MVCFramework))]
+public class DependencyInjection : MonoBehaviour {
 
     [SerializeField] 
     private bool UseMockSystems = true;
@@ -13,13 +14,15 @@ public class ServiceInitializer : MonoBehaviour {
         UseMockSystems = false;
 #endif
 
-        var framework = FindObjectOfType<MVCFramework>();
+        var framework = GetComponent<MVCFramework>();
 
         if (UseMockSystems) {            
+            // Register mock services here.
         } else {
+            // Register production services here.
         }
 
-
+        // Initialize controller for the first UI here.
         // framework.Initialize<FirstController>();
     }
 

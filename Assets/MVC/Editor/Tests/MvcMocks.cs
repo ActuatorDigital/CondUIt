@@ -35,7 +35,7 @@ public class TestExclusiveViewOne : View<TestModel, TestExclusiveControllerOne> 
 
     protected override void ClearElements() { }
     protected override void LoadElements() {
-        Model.TestString = "Changed";
+        ViewModel.TestString = "Changed";
     }
 }
 

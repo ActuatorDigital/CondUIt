@@ -20,10 +20,10 @@ namespace MVC {
             set { _controller = value; }
         }
 
-        public object ViewModel { get; set; }
-        protected M Model {
-            get { return (M)ViewModel; }
-            set { ViewModel = value; }
+        public object Model { get; set; }
+        protected M ViewModel {
+            get { return (M)Model; }
+            set { Model = value; }
         }
 
         public void Initialise (MVCFramework mvc)

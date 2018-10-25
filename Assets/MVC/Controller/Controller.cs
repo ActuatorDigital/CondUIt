@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MVC {
 
-    public abstract class Controller<M> : 
+    public abstract class Controller<M> :
         Controller where M : IModel {
 
         IModel _context;
@@ -24,11 +24,11 @@ namespace MVC {
 
         public C Redirect<C>(
             IModel context
-            // params object[] args
+        // params object[] args
         ) where C : class, IController {
 
             var targetController = _framework.GetController<C>();
-            if(!targetController.GetType().IsSubclassOf(GetType()))
+            if (!targetController.GetType().IsSubclassOf(GetType()))
                 targetController.GetType().GetMethod("Init").Invoke(context, null);
 
             base.Redirect<C>();
@@ -58,11 +58,11 @@ namespace MVC {
         }
 
         public C Redirect<C>(/*IModel context*/) where C : class, IController {
-            CheckFrameworkInitialized(); 
+            CheckFrameworkInitialized();
             var targetController = _framework.GetController<C>();
 
             // if(targetController.Exclusive)
-            _framework.HideViews(); 
+            _framework.HideViews<C>();
 
             // foreach(var view in _framework.GetViewsForController<C>())
             //     view.Render();
@@ -77,10 +77,10 @@ namespace MVC {
             CheckFrameworkInitialized();
             var view = _framework.GetView<V>();
 
-            if(!view.IsPartial)
+            if (!view.IsPartial)
                 _framework.HideActiveViews();
 
-            view.ViewModel = viewModel;
+            view.Model = viewModel;
             view.Render();
         }
 

@@ -14,57 +14,56 @@ namespace MVC {
     [RequireComponent(typeof(EventSystem))]
     [RequireComponent(typeof(StandaloneInputModule))]
     [RequireComponent(typeof(RectTransform))]
-    public class MVCFramework : MonoBehaviour{
+    public class MVCFramework : MonoBehaviour {
 
         private List<IView> _views = new List<IView>();
         private List<IController> _controllers = new List<IController>();
 
         ServiceLoader _services = new ServiceLoader();
 
-        public void Initialize<FirstController>() where FirstController : IController 
-        {
+        public void Initialize<FirstController>() where FirstController : IController {
 
             if (_controllers.Any())
                 _controllers.Clear();
             if (_views.Any())
                 _views.Clear();
 
-            ConnectMVC();
+            ConnectMVC<FirstController>();
             DeliverServices<FirstController>();
         }
 
         public MVCFramework RegisterService<T>(object service) {
             if (_services.CheckServiceRegistered<T>())
-                throw new Exception("Services should be Singletons."+
+                throw new Exception("Services should be Singletons." +
                     " A service for " + typeof(T).FullName + " is already registered");
             _services.RegisterService(typeof(T), service);
             return this;
         }
 
-        public MVCFramework RegisterService<T>() where T: new() {
+        public MVCFramework RegisterService<T>() where T : new() {
             var service = new T();
             _services.RegisterService(service);
             return this;
         }
 
-        void ConnectMVC()  {
+        void ConnectMVC<FirstController>() {
             _controllers.AddRange(GetComponentsInChildren<IController>(true));
             _views.AddRange(GetComponentsInChildren<IView>(true));
 
-            foreach (var v in _views){
-                try{
+            foreach (var v in _views) {
+                try {
                     v.Initialise(this);
-                }catch(MissingComponentException ex){
+                } catch (MissingComponentException ex) {
                     throw new MissingComponentException(
-                        v.GetType().Name + " could not find it's controller", ex);   
+                        v.GetType().Name + " could not find it's controller", ex);
                 }
             }
 
-            HideViews();
+            HideViews<FirstController>();
         }
 
         void DeliverServices<C>() where C : IController {
-            foreach(IController c in _controllers){
+            foreach (IController c in _controllers) {
                 c.LoadServices(_services);
                 c.LoadFramework(this);
             }
@@ -78,8 +77,7 @@ namespace MVC {
             _services.ClearServices();
         }
 
-        internal IController GetController<C>() where C : IController
-        {
+        internal IController GetController<C>() where C : IController {
             var type = typeof(C);
             var controller = _controllers.FirstOrDefault(c => c.GetType().IsAssignableFrom(type));
 
@@ -91,8 +89,7 @@ namespace MVC {
             return controller;
         }
 
-        internal IView GetView<V>() where V : IView
-        {
+        internal IView GetView<V>() where V : IView {
             var type = typeof(V);
             var view = _views.FirstOrDefault(v => v.GetType().IsAssignableFrom(type));
 
@@ -104,21 +101,24 @@ namespace MVC {
             return view;
         }
 
-        internal void HideActiveViews ()
-        {
+        internal void HideActiveViews() {
             foreach (var v in _views)
                 if (!v.IsPartial)
                     v.Hide();
         }
 
-        internal void HideViews()
-        {
-            foreach (var v in _views){
+        internal void HideViews<C>() {
+            var controller = _controllers
+                .First(c => c.GetType() == typeof(C));
+            var exclusiveController = controller.Exclusive;
+            foreach (var v in _views) {
                 var controllerType = v.GetControllerType();
-                var controller = _controllers
-                    .First( c => c.GetType() == controllerType );
-                if(controller.Exclusive)
+                var parentController = _controllers
+                    .First(c => c.GetType() == controllerType);
+                var targetIsParent = parentController.Equals(controller);
+                if (controller.Exclusive && !targetIsParent) {
                     v.Hide();
+                }
             }
         }
     }
@@ -152,5 +152,5 @@ namespace MVC {
         internal bool CheckServiceRegistered<T>() {
             return Services.ContainsKey(typeof(T));
         }
-    }   
+    }
 }

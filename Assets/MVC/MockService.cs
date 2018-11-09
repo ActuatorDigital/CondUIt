@@ -13,13 +13,25 @@ namespace Services {
 
         public static T Create<T> () where T : MockService, new() 
         {
-            var existingService = FindObjectOfType<MockService>();
-            var parentGO = existingService == null ? new GameObject("Debug Services") : 
-                        existingService.transform.parent.gameObject;
 
-            var go = new GameObject(typeof(T).Name);
-            go.transform.SetParent(parentGO.transform);
-            return go.AddComponent<T>();
+            GameObject parentGO;
+
+            var anyExistingService = FindObjectOfType<MockService>();
+            if (anyExistingService.transform.parent == null) {
+                parentGO = new GameObject("DebugServices");
+            } else {
+                parentGO = anyExistingService.transform.parent.gameObject;
+            }
+
+            var existingConcreteService = FindObjectOfType<T>();
+            if (existingConcreteService == null) {
+                var go = new GameObject(typeof(T).Name);
+                go.transform.SetParent(parentGO.transform);
+                return go.AddComponent<T>();
+            } else {
+                existingConcreteService.transform.SetParent(parentGO.transform);
+                return existingConcreteService;
+            }
         }
 
         public static Action<float> EmptyProgressHandler { get { return (p) => { }; } }

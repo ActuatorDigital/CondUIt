@@ -6,9 +6,9 @@ namespace MVC.Views
     public class TransitionEventTrigger : TransitionHandler
     {
         [SerializeField]
-        private UnityEvent _showHandlers;
+        private UnityEvent _showHandlers = null;
         [SerializeField]
-        private UnityEvent _hideHandlers;
+        private UnityEvent _hideHandlers = null;
 
         public override void OnHide()
         {

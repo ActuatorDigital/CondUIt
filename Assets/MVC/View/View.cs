@@ -43,6 +43,8 @@ namespace MVC {
         }
 
         public void Hide() {
+            if (!gameObject.activeInHierarchy) return;
+            
             foreach (var handler in _transitionHandlers)
                 handler.OnHide();
 

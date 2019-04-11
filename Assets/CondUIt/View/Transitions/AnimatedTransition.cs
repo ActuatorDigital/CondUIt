@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace CondUIt.Views
+namespace Conduit.Views
 {
     [RequireComponent(typeof(Animator))]
     public class AnimatedTransition : TransitionHandler

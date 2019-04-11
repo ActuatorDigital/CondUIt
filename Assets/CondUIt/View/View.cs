@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace CondUIt {
+namespace Conduit {
     [RequireComponent(typeof(RectTransform))]
     [RequireComponent(typeof(CanvasRenderer))]
     public abstract class View<M, C> :
@@ -26,7 +26,7 @@ namespace CondUIt {
             set { Model = value; }
         }
 
-        public void Initialise (CondUItFramework framework)
+        public void Initialise (ConduitUIFramework framework)
         {
             _controller = framework.GetController<C>();
 
@@ -48,7 +48,7 @@ namespace CondUIt {
             foreach (var handler in _transitionHandlers)
                 handler.OnHide();
 
-            if(ViewModel != null)
+            if(Model != null)
                 ClearElements();
         }
 

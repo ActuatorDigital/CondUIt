@@ -1,7 +1,6 @@
-﻿using CondUIt;
-using System;
+﻿using Conduit;
 
-public class TestExclusiveControllerOne : Controller {
+public class TestExclusiveControllerOne : FirstController {
     public override bool Exclusive {
         get { return true; }
     }
@@ -44,7 +43,7 @@ public class TestExclusiveViewTwo : View<TestModel, TestExclusiveControllerOne> 
     protected override void LoadElements() { }
 }
 
-public class TestControllerOne : Controller {
+public class TestControllerOne : FirstController {
 
     public string TestString { get; set; }
 

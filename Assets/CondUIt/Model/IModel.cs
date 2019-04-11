@@ -1,3 +1,3 @@
-﻿namespace CondUIt {
+﻿namespace Conduit {
     public interface IModel { }
 }

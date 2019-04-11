@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System;
 
-namespace CondUIt {
+namespace Conduit {
+
+    public abstract class FirstController : 
+        Controller, IFirstController {}
 
     public abstract class Controller<M> :
         Controller where M : IModel {
@@ -43,7 +46,7 @@ namespace CondUIt {
     public abstract class Controller :
             MonoBehaviour, IController {
 
-        internal CondUItFramework _framework;
+        internal ConduitUIFramework _framework;
 
         public abstract bool Exclusive { get; }
 
@@ -51,14 +54,14 @@ namespace CondUIt {
 
         public abstract void Display();
 
-        public void LoadFramework(CondUItFramework framework) {
+        public void LoadFramework(ConduitUIFramework framework) {
             _framework = framework;
         }
 
         public C Redirect<C>() where C : class, IController {
             CheckFrameworkInitialized();
             var targetController = _framework.GetController<C>();
-            
+
             _framework.HideViews<C>();
             targetController.Display();
 
@@ -79,11 +82,12 @@ namespace CondUIt {
         protected void CheckFrameworkInitialized() {
             if (_framework == null)
                 throw new TypeInitializationException(
-                    typeof(CondUItFramework).FullName,
+                    typeof(ConduitUIFramework).FullName,
                     new Exception("Calling action before framework has been Initialized, run " +
-                    "CondUItFramework.Initialize with the default controller before calling actions.")
+                    "ConduitFramework.Initialize with the default controller before calling actions.")
                 );
         }
 
     }
+
 }

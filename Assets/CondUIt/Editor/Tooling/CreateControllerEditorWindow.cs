@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System;
-using CondUIt;
+using Conduit;
 using System.IO;
 
 public partial class CreateControllerEditorWindow : RecompileEditorWindow {
@@ -58,7 +58,7 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
 	void AddControllerToScene(){
         if(!_controllerAddRequested) return;
 
-		CondUItEditorFactory.AddControllerToScene(
+		ConduitEditorFactory.AddControllerToScene(
 			SelectedControllerStr );
         OnRecompileComplete -= AddControllerToScene;
         _controllerAddRequested = false;
@@ -68,7 +68,7 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
     {
         if (GUILayout.Button("Generate Controller"))
         {
-            CondUItEditorFactory.AddControllerToSolution(
+            ConduitEditorFactory.AddControllerToSolution(
                 SelectedControllerStr,
                 controllerCode );
             GeneratingController = true;
@@ -129,7 +129,7 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
     private string DrawGeneratedText()
     {
 		GUILayout.BeginVertical("Box");
-        var generatedText = CondUItCodeGeneration
+        var generatedText = ConduitCodeGeneration
             .GenerateControllerTemplate(
                 SelectedModelStr, 
                 SelectedControllerStr,

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CondUIt {
+namespace Conduit {
     class ServiceLoader : IServiceLoader {
         private static Dictionary<Type, object> Services = new Dictionary<Type, object>();
         private const string MISSING_SERVICE_LOG = "No service was registered for {0}.";

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 
-namespace CondUIt.Views
+namespace Conduit.Views
 {
     public class TransitionEventTrigger : TransitionHandler
     {

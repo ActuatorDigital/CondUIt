@@ -75,7 +75,7 @@ public partial class CreateModelEditorWindow : RecompileEditorWindow {
     private string DrawGeneratedText()
     {
 		GUILayout.BeginVertical("Box");
-        var generatedText = CondUItCodeGeneration
+        var generatedText = ConduitCodeGeneration
             .GenerateModelTemplate(
                 _modelName, 
                 SelectedModelParent, 
@@ -91,7 +91,7 @@ public partial class CreateModelEditorWindow : RecompileEditorWindow {
     {
         GUILayout.Space(10);
         if (GUILayout.Button("Generate Model")){
-            CondUItEditorFactory.AddModelToSolution(
+            ConduitEditorFactory.AddModelToSolution(
                 _modelName,
                 modelCode );
             GeneratingController = true;

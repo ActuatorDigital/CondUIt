@@ -1,10 +1,10 @@
 using System;
 using System.IO;
-using CondUIt;
+using Conduit;
 using UnityEditor;
 using UnityEngine;
 
-public class CondUItEditorFactory {
+public class ConduitEditorFactory {
 
     public static void AddControllerToScene(
         string className
@@ -30,7 +30,7 @@ public class CondUItEditorFactory {
         Selection.activeGameObject = controllerGo;
     }
 
-    static void ConfigureCanvas(CondUItFramework framework)
+    static void ConfigureCanvas(ConduitUIFramework framework)
     {
         var canvas = framework.GetComponent<Canvas>();
         var camera = GameObject.FindObjectOfType<Camera>();
@@ -81,7 +81,7 @@ public class CondUItEditorFactory {
     }
 
     static string SanatizeModelName(string model){
-        return CondUItCodeGeneration.CamelCaseSentence(model);
+        return ConduitCodeGeneration.CamelCaseSentence(model);
     }
 
     static Type GetTypeForControllerStr(string controllerType){
@@ -112,12 +112,12 @@ public class CondUItEditorFactory {
         AssetDatabase.LoadAllAssetsAtPath(codeFilePath);
     }
 
-    static CondUItFramework GetFramework(){
+    static ConduitUIFramework GetFramework(){
 
-        var framework = UnityEngine.Object.FindObjectOfType<CondUItFramework>();
+        var framework = UnityEngine.Object.FindObjectOfType<ConduitUIFramework>();
         if(!framework){
-            framework = new GameObject("CondUItFramework")
-                .AddComponent<CondUItFramework>();
+            framework = new GameObject("ConduitFramework")
+                .AddComponent<ConduitUIFramework>();
         }
 
         return framework;

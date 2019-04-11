@@ -1,4 +1,4 @@
-﻿namespace CondUIt
+﻿namespace Conduit
 {
     public class OnOffTransition : TransitionHandler
     {

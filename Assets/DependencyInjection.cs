@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using CondUIt;
+using Conduit;
 
-[RequireComponent(typeof(CondUItFramework))]
+[RequireComponent(typeof(ConduitUIFramework))]
 public class DependencyInjection : MonoBehaviour {
 
     [SerializeField] 
@@ -13,7 +13,7 @@ public class DependencyInjection : MonoBehaviour {
         UseMockSystems = false;
 #endif
 
-        var framework = GetComponent<CondUItFramework>();
+        var services = GetComponent<ConduitServices>();
 
         if (UseMockSystems) {            
             // Register mock services here.
@@ -21,8 +21,6 @@ public class DependencyInjection : MonoBehaviour {
             // Register production services here.
         }
 
-        // Initialize controller for the first UI here.
-        //framework.InitializeUI<FirstController>();
     }
 
 }

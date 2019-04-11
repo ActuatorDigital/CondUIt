@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace CondUIt {
+namespace Conduit {
 
     [RequireComponent(typeof(Canvas))]
     [RequireComponent(typeof(CanvasScaler))]
@@ -13,39 +13,24 @@ namespace CondUIt {
     [RequireComponent(typeof(EventSystem))]
     [RequireComponent(typeof(StandaloneInputModule))]
     [RequireComponent(typeof(RectTransform))]
-    public class CondUItFramework : MonoBehaviour {
+    [RequireComponent(typeof(ConduitServices))]
+    public class ConduitUIFramework : MonoBehaviour {
 
         private List<IView> _views = new List<IView>();
         private List<IController> _controllers = new List<IController>();
 
-        ServiceLoader _services = new ServiceLoader();
-
-        public void InitializeUI<FirstController>() where FirstController : IController {
+        private void Awake() {
 
             if (_controllers.Any())
                 _controllers.Clear();
             if (_views.Any())
                 _views.Clear();
 
-            ConnectUIFamework<FirstController>();
-            DeliverServices<FirstController>();
+            ConnectUIFamework();
+            DeliverServices<IFirstController>();
         }
 
-        public CondUItFramework RegisterService<T>(object service) {
-            if (_services.CheckServiceRegistered<T>())
-                throw new Exception("Services should be Singletons." +
-                    " A service for " + typeof(T).FullName + " is already registered");
-            _services.RegisterService(typeof(T), service);
-            return this;
-        }
-
-        public CondUItFramework RegisterService<T>() where T : new() {
-            var service = new T();
-            _services.RegisterService(service);
-            return this;
-        }
-
-        void ConnectUIFamework<FirstController>() {
+        void ConnectUIFamework() {
             _controllers.AddRange(GetComponentsInChildren<IController>(true));
             _views.AddRange(GetComponentsInChildren<IView>(true));
 
@@ -58,21 +43,28 @@ namespace CondUIt {
                 }
             }
 
-            HideViews<FirstController>();
+            HideViews<IFirstController>();
         }
 
         void DeliverServices<C>() where C : IController {
 
+            var services = FindObjectOfType<ConduitServices>();
+            if (services == null)
+                throw new MissingComponentException(
+                    "Conduit was unable to find the services Registry. " +
+                    "Ensure a signleton instance of ConduitServices exists " +
+                    "in the scene.");
+
             IController firstController = null;
             foreach (IController c in _controllers) {
-                c.LoadServices(_services);
+                c.LoadServices(services._services);
                 c.LoadFramework(this);
                 if (c is C) 
                     firstController = c as IController;
             }
 
             firstController.Display();
-            _services.ClearServices();
+            services._services.ClearServices();
         }
 
         internal IController GetController<C>() where C : IController {
@@ -109,7 +101,7 @@ namespace CondUIt {
 
         internal void HideViews<C>() {
             var controller = _controllers
-                .First(c => c.GetType() == typeof(C));
+                .First(c => c is C);
             var exclusiveController = controller.Exclusive;
             foreach (var v in _views) {
                 var controllerType = v.GetControllerType();

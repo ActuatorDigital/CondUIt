@@ -44,7 +44,7 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
     {
         if(!_viewAddRequested) return;
         var controller = _controllerTypes[_selectedControllerIndex];
-        CondUItEditorFactory.AddViewToController(controller.FullName, _viewName);
+        ConduitEditorFactory.AddViewToController(controller.FullName, _viewName);
         OnRecompileComplete -= AddViewToController;
         _viewAddRequested = false;
     }
@@ -110,7 +110,7 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
     string DrawGeneratedText()
     {
 		GUILayout.BeginVertical("Box");
-        var generatedViewCode = CondUItCodeGeneration
+        var generatedViewCode = ConduitCodeGeneration
             .GenerateViewTemplate( 
                 SelectedControllerName,
                 _viewName );
@@ -123,7 +123,7 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
     private void DrawGenerateViewButton(string viewCode) 
     {
         if(GUILayout.Button("Generate View")){
-            CondUItEditorFactory.AddViewToSolution(
+            ConduitEditorFactory.AddViewToSolution(
                 _viewName,
                 viewCode );
             GeneratingController = true;

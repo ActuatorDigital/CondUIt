@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using NUnit.Framework;
 
-namespace CondUIt {
+namespace Conduit {
     public class ControllerTests {
 
         [Test]
@@ -10,8 +10,8 @@ namespace CondUIt {
             const string PRE_TEST_STR = "pre", 
                          POST_TEST_STR = "post";
 
+
             var canvas = new GameObject("Canvas");
-            var conduit = canvas.AddComponent<CondUItFramework>();
 
             var controllerOne = new GameObject()
                 .AddComponent<TestControllerOne>();
@@ -22,7 +22,7 @@ namespace CondUIt {
                 .AddComponent<TestControllerTwo>();
             controllerTwo.gameObject.transform.SetParent(canvas.transform);
 
-            conduit.InitializeUI<TestControllerOne>();
+            var conduit = canvas.AddComponent<ConduitUIFramework>();
 
             try {
                 // Act.

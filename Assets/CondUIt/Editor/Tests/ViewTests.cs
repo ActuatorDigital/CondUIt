@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using NUnit.Framework;
 
-namespace CondUIt {
+namespace Conduit {
 
     public class ViewTests {
 
@@ -9,7 +9,6 @@ namespace CondUIt {
         public void ControllerCanCallItsViews() {
             // Arrange = First Controller and view.
             var canvasGo = new GameObject();
-            var conduit = canvasGo.AddComponent<CondUItFramework>();
 
             var controllerExOneGo = new GameObject();
             controllerExOneGo.transform.parent = canvasGo.transform;
@@ -23,7 +22,7 @@ namespace CondUIt {
             var initialString = "Test";
             var modelObj = new TestModel(initialString);
 
-            conduit.InitializeUI<TestExclusiveControllerOne>();
+            var conduit = canvasGo.AddComponent<ConduitUIFramework>();
 
             // Act - Call view from controller.
             controllerExOne.View<TestExclusiveViewOne>(modelObj);
@@ -36,7 +35,6 @@ namespace CondUIt {
         public void CanHideViews() {
             // Arrange.
             var canvasGo = new GameObject();
-            var framework = canvasGo.AddComponent<CondUItFramework>();
 
             var controllerGoOne = new GameObject();
             controllerGoOne.transform.parent = canvasGo.transform;
@@ -47,7 +45,7 @@ namespace CondUIt {
             var view = viewGo.AddComponent<TestView>();
             viewGo.transform.SetParent(controllerGoOne.transform);
 
-            framework.InitializeUI<TestControllerOne>();
+            var framework = canvasGo.AddComponent<ConduitUIFramework>();
 
             // Act.
             view.Hide();
@@ -115,7 +113,6 @@ namespace CondUIt {
 
             // Arrange First Controller and view.
             var canvasGo = new GameObject();
-            var conduit = canvasGo.AddComponent<CondUItFramework>();
 
             var controllerGoOne = new GameObject();
             controllerGoOne.transform.parent = canvasGo.transform;
@@ -136,7 +133,7 @@ namespace CondUIt {
             viewGOTwo.AddComponent<TestExclusiveViewTwo>();
             viewGOTwo.transform.SetParent(controllerGoOne.transform);
 
-            conduit.InitializeUI<TestControllerOne>();
+            var conduit = canvasGo.AddComponent<ConduitUIFramework>();
 
             // Act.
             controllerOne.Redirect<TestExclusiveControllerOne>();

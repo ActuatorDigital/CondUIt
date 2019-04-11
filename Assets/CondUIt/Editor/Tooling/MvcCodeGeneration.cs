@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using UnityEngine;
 
-public class CondUItCodeGeneration {
+public class ConduitCodeGeneration {
 	public static string GenerateControllerTemplate(
 		string modelTypeStr, 
 		string classNameStr, 
@@ -14,7 +12,7 @@ public class CondUItCodeGeneration {
 	) { 
 		classNameStr = CamelCaseSentence(classNameStr);
 		string generatedController =
-            "using CondUIt;\n" +
+            "using Conduit;\n" +
 			(modelBound ? "using Models;" : "")+"\n" + 
 			"namespace Controllers {\n" +
 			"\tpublic class " + classNameStr + "Controller : Controller" + (modelBound ? "<" + modelTypeStr + ">" : "") + " {\n" +
@@ -44,7 +42,7 @@ public class CondUItCodeGeneration {
 
 		string viewModelName = purpose + "ViewModel";
 		string generatedCode =
-            "using CondUIt;\n" + 
+            "using Conduit;\n" + 
 			"using Controllers;\n" + 
 			"namespace Views {\n" + 
 			"\tpublic class " + purpose + "View : View<" + viewModelName + ", " + controllerName + "> {\n" + 
@@ -71,7 +69,7 @@ public class CondUItCodeGeneration {
 		var modelCodeStr = 
 			"\n"+
 			(isModelRoot ? "\n" : "") +
-             "using CondUIt;\n\n" +  
+             "using Conduit;\n\n" +  
 			"namespace Models {\n" + 
 			"\tpublic class " + modelName + " : " + modelExt + " {\n\n" + 
 			"\t}\n" + 

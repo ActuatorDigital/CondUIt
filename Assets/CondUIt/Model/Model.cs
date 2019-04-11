@@ -1,5 +1,5 @@
 ﻿
-namespace CondUIt {
+namespace Conduit {
 
     public abstract class Model<P> : IModel
             where P : IModel {

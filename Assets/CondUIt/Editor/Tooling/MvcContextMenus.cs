@@ -1,22 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
-public class CondUItContextMenus : MonoBehaviour {
+public class ConduitContextMenus : MonoBehaviour {
 
-	[MenuItem("GameObject/UI/CondUIt/Controller")]
+	[MenuItem("GameObject/UI/Conduit/Controller")]
 	static void CreateController(){
 		CreateControllerEditorWindow.Display();
 	}
 
-	[MenuItem("GameObject/UI/CondUIt/View")]
+	[MenuItem("GameObject/UI/Conduit/View")]
 	static void CreateView(){
 		CreateViewEditorWindow.Display();
 	}
 
 
-	[MenuItem("GameObject/UI/CondUIt/Model")]
+	[MenuItem("GameObject/UI/Conduit/Model")]
 	static void CreateModel(){
 		CreateModelEditorWindow.Display();
 	}

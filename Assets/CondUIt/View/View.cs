@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
 namespace Conduit {
     [RequireComponent(typeof(RectTransform))]
     [RequireComponent(typeof(CanvasRenderer))]
-    public abstract class View<M, C> :
+    public abstract class View<C> :
         MonoBehaviour, IView
         where C : IController {
 
@@ -20,11 +21,8 @@ namespace Conduit {
             set { _controller = value; }
         }
 
-        public object Model { get; set; }
-        protected M ViewModel {
-            get { return (M)Model; }
-            set { Model = value; }
-        }
+        public dynamic ViewModel { get; set; }
+        public ViewBinding ViewBinding { get; set; }
 
         public void Initialise (ConduitUIFramework framework)
         {
@@ -48,7 +46,7 @@ namespace Conduit {
             foreach (var handler in _transitionHandlers)
                 handler.OnHide();
 
-            if(Model != null)
+            if(ViewModel != null)
                 ClearElements();
         }
 

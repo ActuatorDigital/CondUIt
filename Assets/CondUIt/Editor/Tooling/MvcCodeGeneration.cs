@@ -8,14 +8,15 @@ public class ConduitCodeGeneration {
 		string modelTypeStr, 
 		string classNameStr, 
 		bool exclusive,
-		bool modelBound
+		bool modelBound,
+        bool isFirst
 	) { 
 		classNameStr = CamelCaseSentence(classNameStr);
 		string generatedController =
             "using Conduit;\n" +
 			(modelBound ? "using Models;" : "")+"\n" + 
 			"namespace Controllers {\n" +
-			"\tpublic class " + classNameStr + "Controller : Controller" + (modelBound ? "<" + modelTypeStr + ">" : "") + " {\n" +
+			"\tpublic class " + classNameStr + "Controller : "+(isFirst?"First":"")+"Controller" + (modelBound ? "<" + modelTypeStr + ">" : "") + " {\n" +
 			"\t\tpublic override bool Exclusive { get { return " + (exclusive ? "true" : "false")+ "; } }\n" +
 			"\t\tpublic override void LoadServices(IServiceLoader services) { }\n" +
 			"\t\tpublic override void Display() { }\n" +
@@ -40,17 +41,18 @@ public class ConduitCodeGeneration {
 			purpose = CamelCaseSentence(viewName);
 
 
-		string viewModelName = purpose + "ViewModel";
+		//string viewModelName = purpose + "ViewModel";
 		string generatedCode =
             "using Conduit;\n" + 
 			"using Controllers;\n" + 
+            "using UnityEngine.UI;\n" +
 			"namespace Views {\n" + 
-			"\tpublic class " + purpose + "View : View<" + viewModelName + ", " + controllerName + "> {\n" + 
+			"\tpublic class " + purpose + "View : View<" + controllerName + "> {\n" + 
 			"\t\tpublic override bool IsPartial { get { return false; } }\n"+
 			"\t\tprotected override void LoadElements() {}\n" + 
 			"\t\tprotected override void ClearElements() {}\n" +
 			"\t}\n"+
-			"\tpublic struct " + viewModelName + "{ }\n" +
+			//"\tpublic struct " + viewModelName + "{ }\n" +
 			"}";
 
 		return generatedCode;

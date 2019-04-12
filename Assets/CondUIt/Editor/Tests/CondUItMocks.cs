@@ -9,7 +9,7 @@ public class TestExclusiveControllerOne : FirstController {
         UnityEngine.Debug.LogWarning(
             "TODO: Make this implicit "+
             "through view generic type binding!");
-        View<TestExclusiveViewOne>(new TestModel(""));
+        View<TestExclusiveViewOne>(new { TestString = "" });
      }
 
     public override void LoadServices(IServiceLoader services) { }
@@ -27,16 +27,16 @@ public class TestExclusiveControllerTwo : Controller {
     public override void LoadServices(IServiceLoader services) { }
 }
 
-public class TestExclusiveViewOne : View<TestModel, TestExclusiveControllerOne> {
+public class TestExclusiveViewOne : View<TestExclusiveControllerOne> {
     public override bool IsPartial { get { return false; } } 
 
     protected override void ClearElements() { }
     protected override void LoadElements() {
-        ViewModel.TestString = "Changed";
+        //ViewModel.TestString = "Changed";
     }
 }
 
-public class TestExclusiveViewTwo : View<TestModel, TestExclusiveControllerOne> {
+public class TestExclusiveViewTwo : View<TestExclusiveControllerOne> {
     public override bool IsPartial { get { return false; } } 
 
     protected override void ClearElements() { }
@@ -75,7 +75,7 @@ public class TestControllerTwo : Controller {
     }
 }
 
-public class TestView : View<TestModel, TestControllerOne>
+public class TestView : View<TestControllerOne>
 {
     public override bool IsPartial { get { return false; } }
 
@@ -90,7 +90,7 @@ public class TestView : View<TestModel, TestControllerOne>
     }
 }
 
-public class TestModel : IModel {
-    public string TestString;
-    public TestModel(string testString) { TestString = testString; }
-}
+//public class TestModel : IModel {
+//    public string TestString;
+//    public TestModel(string testString) { TestString = testString; }
+//}

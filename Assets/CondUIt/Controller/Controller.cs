@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Dynamic;
 
 namespace Conduit {
 
@@ -68,15 +69,18 @@ namespace Conduit {
             return targetController as C;
         }
 
-        public void View<V>(object viewModel = null) where V : IView {
+        public ViewBinding View<V>(dynamic viewModel = null) where V : IView {
             CheckFrameworkInitialized();
             var view = _framework.GetView<V>();
 
             if (!view.IsPartial)
                 _framework.HideActiveViews();
 
-            view.Model = viewModel;
+            view.ViewModel = viewModel;
+            view.ViewBinding = new ViewBinding();
             view.Render();
+
+            return view.ViewBinding;
         }
 
         protected void CheckFrameworkInitialized() {

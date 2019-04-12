@@ -2,7 +2,8 @@
 
 namespace Conduit {
     public interface IView {
-        object Model { get; set; }
+        dynamic ViewModel { get; set; }
+        ViewBinding ViewBinding { get; set; }
         bool IsPartial { get; }
         void Initialise(ConduitUIFramework framework);
         void Render();

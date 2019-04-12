@@ -132,12 +132,14 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
     private string DrawGeneratedText()
     {
 		GUILayout.BeginVertical("Box");
+        var isFirstController = FindObjectOfType<Conduit.FirstController>() == null;
         var generatedText = ConduitCodeGeneration
             .GenerateControllerTemplate(
                 SelectedModelStr, 
                 SelectedControllerStr,
                 _exclusive,
-                _modelBound
+                _modelBound,
+                isFirstController
             );
         foreach (var line in generatedText.Split('\n'))
             GUILayout.Label(line.Replace("\t", "    "));

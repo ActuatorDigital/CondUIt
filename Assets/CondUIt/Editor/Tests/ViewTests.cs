@@ -20,7 +20,7 @@ namespace Conduit {
             viewGOOne.transform.SetParent(controllerExOneGo.transform);
 
             var initialString = "Test";
-            var modelObj = new TestModel(initialString);
+            var modelObj = new { TestString = "" };
 
             var conduit = canvasGo.AddComponent<ConduitUIFramework>();
 

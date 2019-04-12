@@ -12,6 +12,7 @@ namespace Conduit {
     [RequireComponent(typeof(EventSystem))]
     [RequireComponent(typeof(StandaloneInputModule))]
     [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(ConduitServices))]
     public class ConduitUIFramework : MonoBehaviour {
 
         private List<IView> _views = new List<IView>();
@@ -47,8 +48,8 @@ namespace Conduit {
         void DeliverServices<C>() where C : IController {
             
             var services = FindObjectOfType<ConduitServices>();
-            if (services == null) 
-                services = gameObject.AddComponent<ConduitServices>();
+            //if (services == null) 
+            //    services = gameObject.AddComponent<ConduitServices>();
 
             IController firstController = null;
             foreach (IController c in _controllers) {

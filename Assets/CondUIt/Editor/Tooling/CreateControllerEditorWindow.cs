@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System;
-using Conduit;
-using System.IO;
 
 public partial class CreateControllerEditorWindow : RecompileEditorWindow {
 
@@ -66,8 +64,9 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
 
     private void DrawGenerateControllerButton(string controllerCode)
     {
-        if (GUILayout.Button("Generate Controller"))
-        {
+        var keyPressed = Event.current.type == EventType.KeyDown;
+        var enterPressed = keyPressed & Event.current.character == '\n';
+        if (GUILayout.Button("Generate Controller") || enterPressed) {
             ConduitEditorFactory.AddControllerToSolution(
                 SelectedControllerStr,
                 controllerCode );
@@ -120,8 +119,12 @@ public partial class CreateControllerEditorWindow : RecompileEditorWindow {
         GUILayout.Label(
             "Generating a Controller, first requries a Model:", 
             GUILayout.ExpandWidth(true) );
-		if(GUILayout.Button("Generate Model"))
+
+        var keyPressed = Event.current.type == EventType.KeyDown;
+        var enterPressed = keyPressed & Event.current.character == '\n';
+        if (GUILayout.Button("Generate Model") || enterPressed)
             CreateModelEditorWindow.Display();
+
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
     }

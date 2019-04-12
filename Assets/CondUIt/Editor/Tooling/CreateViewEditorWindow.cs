@@ -27,7 +27,7 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
             "Add View", true,
             typeof(CreateControllerEditorWindow),
             typeof(CreateViewEditorWindow) );
-        window.minSize = window.maxSize = new UnityEngine.Vector2(490, 250);
+        window.minSize = window.maxSize = new Vector2(490, 250);
     }
     
     void OnEnable() 
@@ -122,7 +122,10 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
 
     private void DrawGenerateViewButton(string viewCode) 
     {
-        if(GUILayout.Button("Generate View")){
+        var keyPressed = Event.current.type == EventType.KeyDown;
+        var enterPressed = keyPressed & Event.current.character == '\n';
+
+        if(GUILayout.Button("Generate View") || enterPressed){
             ConduitEditorFactory.AddViewToSolution(
                 _viewName,
                 viewCode );

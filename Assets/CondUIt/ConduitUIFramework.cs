@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System.Linq;
+using UnityEngine;
 
 namespace Conduit {
 
@@ -13,7 +12,6 @@ namespace Conduit {
     [RequireComponent(typeof(EventSystem))]
     [RequireComponent(typeof(StandaloneInputModule))]
     [RequireComponent(typeof(RectTransform))]
-    [RequireComponent(typeof(ConduitServices))]
     public class ConduitUIFramework : MonoBehaviour {
 
         private List<IView> _views = new List<IView>();
@@ -47,13 +45,10 @@ namespace Conduit {
         }
 
         void DeliverServices<C>() where C : IController {
-
+            
             var services = FindObjectOfType<ConduitServices>();
-            if (services == null)
-                throw new MissingComponentException(
-                    "Conduit was unable to find the services Registry. " +
-                    "Ensure a signleton instance of ConduitServices exists " +
-                    "in the scene.");
+            if (services == null) 
+                services = gameObject.AddComponent<ConduitServices>();
 
             IController firstController = null;
             foreach (IController c in _controllers) {

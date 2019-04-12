@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Services;
 using Conduit;
 
 [RequireComponent(typeof(ConduitUIFramework))]
@@ -15,10 +16,13 @@ public class DependencyInjection : MonoBehaviour {
 
         var services = GetComponent<ConduitServices>();
 
-        if (UseMockSystems) {            
+        if (UseMockSystems) {
             // Register mock services here.
+            //services.RegisterService(MockService.Create<MockServiceClass>());
         } else {
             // Register production services here.
+            //services.RegisterService<IService>(new Service());
+            //services.RegisterService<IService>(GetComponent<IService>());
         }
 
     }

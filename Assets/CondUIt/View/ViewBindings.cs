@@ -12,32 +12,32 @@ namespace Conduit {
 
         public void BindService( Object service ){
 
-            var fields = service.GetType()
-                .GetFields();
-            foreach (var field in fields) {
+            var properties = service.GetType()
+                .GetProperties();
+            foreach (var property in properties) {
 
                 var isDelegate =
                     typeof(MulticastDelegate)
-                    .IsAssignableFrom(field.FieldType.BaseType);
+                    .IsAssignableFrom(property.PropertyType.BaseType);
                 if (!isDelegate) continue;
 
-                var matchedBinding = _pendingViewBindings.ContainsKey(field.Name);
+                var matchedBinding = _pendingViewBindings.ContainsKey(property.Name);
                 if (!matchedBinding) continue;
 
-                var binding = _pendingViewBindings[field.Name];
-                var matchType = binding.GetType() == field.FieldType;
+                var binding = _pendingViewBindings[property.Name];
+                var matchType = binding.GetType() == property.PropertyType;
                 if (!matchType) continue;
 
-                var bindingDelegate = field.GetValue(service) as Delegate;
+                var bindingDelegate = property.GetValue(service) as Delegate;
                 var combinedDelegate = Delegate
                     .Combine(bindingDelegate, binding) ;
-                field.SetValue( service, combinedDelegate );
+                property.SetValue( service, combinedDelegate );
 
-                _pendingViewBindings.Remove(field.Name);
-                _activeBindings.Add(field.Name, new SavedDelegate {
+                _pendingViewBindings.Remove(property.Name);
+                _activeBindings.Add(property.Name, new SavedDelegate {
                     Service = service,
                     Delegate = combinedDelegate,
-                    Field = field
+                    Field = property
                 });
             }
             
@@ -59,7 +59,7 @@ namespace Conduit {
         struct SavedDelegate {
             public Object Service { get; set; }
             public Delegate Delegate { get; set; }
-            public FieldInfo Field { get; set; } 
+            public PropertyInfo Field { get; set; } 
         }
 
     }

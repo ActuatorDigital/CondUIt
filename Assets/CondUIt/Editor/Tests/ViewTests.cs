@@ -1,9 +1,17 @@
 ﻿using UnityEngine;
 using NUnit.Framework;
+using System;
 
 namespace Conduit {
 
     public class ViewTests {
+
+        [Test]
+        public void ServiceEventsBind() {
+            throw new NotImplementedException(
+                "TODO: Write tests that assert the proper functionality " +
+                "of the service binding systems.");
+        }
 
         [Test]
         public void ControllerCanCallItsViews() {

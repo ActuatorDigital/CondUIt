@@ -1,42 +1,55 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using UnityEngine;
 
 namespace Conduit {
 
-    public abstract class FirstController : 
-        Controller, IFirstController {}
+    public abstract class FirstController<M> :
+        Controller<M>, IFirstController where M : IContext { }
+
+    public abstract class FirstController :
+        Controller, IFirstController { }
 
     public abstract class Controller<M> :
-        Controller where M : IModel {
+        Controller where M : IContext {
 
-        IModel _context;
+        IContext _context;
         public M Context {
             get {
                 try {
                     return (M)_context;
                 } catch (InvalidCastException) {
-                    var message = GetType().FullName + " given context " +
-                        "of type " + _context.GetType().FullName + " but " +
-                        "requires a object of type " + typeof(M).FullName + ".";
-                    throw new InvalidCastException(message);
+                    throw ThrowTypeError(GetType(), _context.GetType(), typeof(M));
                 }
             }
-            set { _context = value as IModel; }
+            set { _context = value as IContext; }
+        }
+
+        private InvalidCastException ThrowTypeError(Type controller, Type expected, Type actual) {
+            var message = controller.FullName + " given context " +
+                "of type " + actual.FullName + " but " +
+                "requires a object of type " + expected.FullName + ".";
+            return new InvalidCastException(message);
         }
 
         public C Redirect<C>(
-            IModel context
+            IContext context
         ) where C : class, IController {
 
             var targetController = _framework.GetController<C>();
-            if (!targetController.GetType().IsSubclassOf(GetType()))
-                targetController.GetType().GetMethod("Init").Invoke(context, null);
+            if (!targetController.GetType().IsSubclassOf(GetType())) {
+                var method = targetController.GetType()
+                    .GetMethod("Init");
+                var paramType = method.GetParameters()[0].ParameterType;
+                if (context.GetType() != paramType)
+                    throw ThrowTypeError(typeof(C), paramType, context.GetType());
+                method.Invoke(targetController, new[] { context });
+            }
 
             base.Redirect<C>();
             return targetController as C;
         }
 
-        public void Init(IModel context) {
+        public void Init(M context) {
             _context = context;
         }
 
@@ -68,7 +81,7 @@ namespace Conduit {
             return targetController as C;
         }
 
-        public void View<V>(object viewModel = null) where V : IView {
+        public V View<V>(object viewModel = null) where V : IView {
             CheckFrameworkInitialized();
             var view = _framework.GetView<V>();
 
@@ -77,6 +90,8 @@ namespace Conduit {
 
             view.Model = viewModel;
             view.Render();
+
+            return (V)view;
         }
 
         protected void CheckFrameworkInitialized() {

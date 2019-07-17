@@ -6,7 +6,7 @@ using UnityEngine;
 
 public partial class CreateViewEditorWindow : RecompileEditorWindow {
 
-	List<Type> _controllerTypes;
+    List<Type> _controllerTypes;
 
     string _viewName = "";
     int _selectedControllerIndex = 0;
@@ -14,44 +14,40 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
     bool _viewAddRequested = false;
 
     string SelectedControllerName {
-        get { 
-            string selectedController = _controllerTypes.Any() ? 
+        get {
+            string selectedController = _controllerTypes.Any() ?
                 _controllerTypes[_selectedControllerIndex].Name : "";
             return selectedController;
         }
     }
-    
-    public static void Display() 
-    {
+
+    public static void Display() {
         var window = GetWindow<CreateViewEditorWindow>(
             "Add View", true,
             typeof(CreateControllerEditorWindow),
-            typeof(CreateViewEditorWindow) );
+            typeof(CreateViewEditorWindow));
         window.minSize = window.maxSize = new Vector2(490, 250);
     }
-    
-    void OnEnable() 
-    {
+
+    void OnEnable() {
         _controllerTypes = EditorReflection.GetControllerTypes();
-        OnRecompileComplete += AddViewToController;        
+        OnRecompileComplete += AddViewToController;
     }
 
-    void OnDisable(){
+    void OnDisable() {
         OnRecompileComplete -= AddViewToController;
     }
 
-    void AddViewToController() 
-    {
-        if(!_viewAddRequested) return;
+    void AddViewToController() {
+        if (!_viewAddRequested) return;
         var controller = _controllerTypes[_selectedControllerIndex];
         ConduitEditorFactory.AddViewToController(controller.FullName, _viewName);
         OnRecompileComplete -= AddViewToController;
         _viewAddRequested = false;
     }
 
-#region UI
-    void OnGUI()
-    {
+    #region UI
+    void OnGUI() {
 
         GUILayout.Space(8);
 
@@ -59,25 +55,23 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
         DrawViewNameInputField();
         var viewCode = DrawGeneratedText();
 
-        if(!_controllerTypes.Any())
+        if (!_controllerTypes.Any())
             DrawCreateControllerFirstMessage();
-        else if (!GeneratingController) 
-            DrawGenerateViewButton(viewCode); 
+        else if (!GeneratingController)
+            DrawGenerateViewButton(viewCode);
         else
             DrawGeneratingViewMessage();
 
     }
 
-    private void DrawViewNameInputField() 
-    {
+    private void DrawViewNameInputField() {
         GUILayout.BeginHorizontal();
         GUILayout.Label("View's Function:", GUILayout.ExpandWidth(false));
         _viewName = GUILayout.TextField(_viewName, GUILayout.ExpandWidth(true));
         GUILayout.EndHorizontal();
     }
 
-    private void DrawGeneratingViewMessage()
-    {
+    private void DrawGeneratingViewMessage() {
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
         GUILayout.Label("Adding " + SelectedControllerName + " view . . .", GUILayout.ExpandWidth(true));
@@ -85,21 +79,19 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
         GUILayout.EndHorizontal();
     }
 
-    private void DrawCreateControllerFirstMessage()
-    {
+    private void DrawCreateControllerFirstMessage() {
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
         GUILayout.Label(
-            "Generating a View, first requires a Controller:", 
-            GUILayout.ExpandWidth(true) );
-		if(GUILayout.Button("Generate Controller"))
+            "Generating a View, first requires a Controller:",
+            GUILayout.ExpandWidth(true));
+        if (GUILayout.Button("Generate Controller"))
             CreateControllerEditorWindow.Display();
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
     }
 
-    private void DrawControllerSelectDropdown()
-    {
+    private void DrawControllerSelectDropdown() {
         _selectedControllerIndex = EditorGUILayout.Popup(
             "Select Controller",
             _selectedControllerIndex,
@@ -107,34 +99,32 @@ public partial class CreateViewEditorWindow : RecompileEditorWindow {
         );
     }
 
-    string DrawGeneratedText()
-    {
-		GUILayout.BeginVertical("Box");
+    string DrawGeneratedText() {
+        GUILayout.BeginVertical("Box");
         var generatedViewCode = ConduitCodeGeneration
-            .GenerateViewTemplate( 
+            .GenerateViewTemplate(
                 SelectedControllerName,
-                _viewName );
+                _viewName);
         foreach (var line in generatedViewCode.Split('\n'))
             GUILayout.Label(line.Replace("\t", "     "));
         GUILayout.EndVertical();
         return generatedViewCode;
     }
 
-    private void DrawGenerateViewButton(string viewCode) 
-    {
+    private void DrawGenerateViewButton(string viewCode) {
         var keyPressed = Event.current.type == EventType.KeyDown;
         var enterPressed = keyPressed & Event.current.character == '\n';
 
-        if(GUILayout.Button("Generate View") || enterPressed){
+        if (GUILayout.Button("Generate View") || enterPressed) {
             ConduitEditorFactory.AddViewToSolution(
                 _viewName,
-                viewCode );
+                viewCode);
             GeneratingController = true;
             _viewAddRequested = true;
         }
-            
+
     }
 
-#endregion
+    #endregion
 
 }

@@ -7,10 +7,10 @@ public class TestExclusiveControllerOne : FirstController {
 
     public override void Display() {
         UnityEngine.Debug.LogWarning(
-            "TODO: Make this implicit "+
+            "TODO: Make this implicit " +
             "through view generic type binding!");
         View<TestExclusiveViewOne>(new TestModel(""));
-     }
+    }
 
     public override void LoadServices(IServiceLoader services) { }
 
@@ -28,7 +28,7 @@ public class TestExclusiveControllerTwo : Controller {
 }
 
 public class TestExclusiveViewOne : View<TestModel, TestExclusiveControllerOne> {
-    public override bool IsPartial { get { return false; } } 
+    public override bool IsPartial { get { return false; } }
 
     protected override void ClearElements() { }
     protected override void LoadElements() {
@@ -37,7 +37,7 @@ public class TestExclusiveViewOne : View<TestModel, TestExclusiveControllerOne> 
 }
 
 public class TestExclusiveViewTwo : View<TestModel, TestExclusiveControllerOne> {
-    public override bool IsPartial { get { return false; } } 
+    public override bool IsPartial { get { return false; } }
 
     protected override void ClearElements() { }
     protected override void LoadElements() { }
@@ -51,7 +51,7 @@ public class TestControllerOne : FirstController {
         get { return false; }
     }
 
-    public override void Display() {}
+    public override void Display() { }
 
     public void ChangeTestStr(string test) {
         TestString = test;
@@ -75,22 +75,19 @@ public class TestControllerTwo : Controller {
     }
 }
 
-public class TestView : View<TestModel, TestControllerOne>
-{
+public class TestView : View<TestModel, TestControllerOne> {
     public override bool IsPartial { get { return false; } }
 
-    protected override void ClearElements()
-    {
+    protected override void ClearElements() {
         gameObject.SetActive(false);
     }
 
-    protected override void LoadElements()
-    {
+    protected override void LoadElements() {
         gameObject.SetActive(true);
     }
 }
 
-public class TestModel : IModel {
+public class TestModel : IContext {
     public string TestString;
     public TestModel(string testString) { TestString = testString; }
 }

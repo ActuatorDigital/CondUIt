@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using UnityEngine;
 
 namespace Conduit {
     public class ControllerTests {
@@ -7,7 +7,7 @@ namespace Conduit {
         [Test]
         public void CallsActionAcrossControllers() {
             // Arrange.
-            const string PRE_TEST_STR = "pre", 
+            const string PRE_TEST_STR = "pre",
                          POST_TEST_STR = "post";
 
 

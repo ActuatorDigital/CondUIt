@@ -1,19 +1,14 @@
-﻿namespace Conduit
-{
-    public class OnOffTransition : TransitionHandler
-    {
-        public override void OnHide()
-        {
+﻿namespace Conduit {
+    public class OnOffTransition : TransitionHandler {
+        public override void OnHide() {
             SetActive(false);
         }
 
-        public override void OnShow()
-        {
+        public override void OnShow() {
             SetActive(true);
         }
 
-        private void SetActive(bool isActive)
-        {
+        private void SetActive(bool isActive) {
             gameObject.SetActive(isActive);
         }
     }

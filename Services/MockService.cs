@@ -3,16 +3,15 @@ using System.Collections;
 using UnityEditor;
 using UnityEngine;
 
-namespace Services {
+namespace AM8Services {
     public abstract class MockService : MonoBehaviour {
 
         [SerializeField]
         private float _loadingDelay = 0.5f;
 
-        public virtual void OnDebugGUI(){}
+        public virtual void OnDebugGUI() { }
 
-        public static T Create<T> () where T : MockService, new() 
-        {
+        public static T Create<T>() where T : MockService, new() {
 
             GameObject parentGO;
 
@@ -40,16 +39,13 @@ namespace Services {
             StartCoroutine(ProcessRequest(callback, progress, _loadingDelay));
         }
 
-        protected void Process(Action callback, Action<float> progress, float duration)
-        {
+        protected void Process(Action callback, Action<float> progress, float duration) {
             StartCoroutine(ProcessRequest(callback, progress, duration));
         }
 
-        private IEnumerator ProcessRequest (Action callback, Action<float> progressHandler, float duration)
-        {
+        private IEnumerator ProcessRequest(Action callback, Action<float> progressHandler, float duration) {
             float t = 0f;
-            while(t < duration && duration > 0)
-            {
+            while (t < duration && duration > 0) {
                 yield return null;
                 t += Time.deltaTime;
                 progressHandler.Invoke(t / duration);
@@ -59,11 +55,11 @@ namespace Services {
         }
     }
 
-    
+
 #if UNITY_EDITOR
     [CustomEditor(typeof(MockService), true)]
     public class DebugEditor : Editor {
-            public override void OnInspectorGUI() {
+        public override void OnInspectorGUI() {
             DrawDefaultInspector();
             var debugService = (MockService)target;
             debugService.OnDebugGUI();

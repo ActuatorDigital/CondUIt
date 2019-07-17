@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Conduit {
 
@@ -45,16 +45,16 @@ namespace Conduit {
         }
 
         void DeliverServices<C>() where C : IController {
-            
+
             var services = FindObjectOfType<ConduitServices>();
-            if (services == null) 
+            if (services == null)
                 services = gameObject.AddComponent<ConduitServices>();
 
             IController firstController = null;
             foreach (IController c in _controllers) {
                 c.LoadServices(services._services);
                 c.LoadFramework(this);
-                if (c is C) 
+                if (c is C)
                     firstController = c as IController;
             }
 
@@ -77,8 +77,8 @@ namespace Conduit {
 
         internal IView GetView<V>() where V : IView {
             var type = typeof(V);
-            var view = _views.FirstOrDefault(v => 
-                v.GetType().IsAssignableFrom(type) );
+            var view = _views.FirstOrDefault(v =>
+                v.GetType().IsAssignableFrom(type));
 
             if (view == null)
                 throw new MissingComponentException(
@@ -103,7 +103,7 @@ namespace Conduit {
                 var parentController = _controllers
                     .First(c => c.GetType() == controllerType);
                 var targetIsParent = parentController.Equals(controller);
-                if (controller.Exclusive && !targetIsParent) 
+                if (controller.Exclusive && !targetIsParent)
                     v.Hide();
             }
         }

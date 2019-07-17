@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Conduit {
+﻿namespace Conduit {
 
     public interface IController {
         void Display();

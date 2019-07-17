@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using UnityEngine;
 
 namespace Conduit {
 
@@ -72,7 +72,7 @@ namespace Conduit {
             viewGo.transform.SetParent(controllerGoOne.transform);
 
             // Act.
-            view.Render(); 
+            view.Render();
 
             // Assert.
             Assert.IsTrue(viewGo.activeInHierarchy);
@@ -104,7 +104,7 @@ namespace Conduit {
             view.Render();
 
             Assert.IsTrue(viewGo.activeInHierarchy);
-            
+
             GameObject.DestroyImmediate(canvasGo);
         }
 
@@ -128,7 +128,7 @@ namespace Conduit {
             controllerGoTwo.transform.parent = canvasGo.transform;
             controllerGoTwo.AddComponent<TestControllerOne>();
             AddPeerViews(controllerGoTwo.transform);
-            
+
             var viewGOTwo = new GameObject();
             viewGOTwo.AddComponent<TestExclusiveViewTwo>();
             viewGOTwo.transform.SetParent(controllerGoOne.transform);
@@ -140,7 +140,7 @@ namespace Conduit {
 
             Assert.IsTrue(!viewGOTwo.activeInHierarchy);
             Assert.IsTrue(viewGOOne.activeInHierarchy);
-            
+
             GameObject.DestroyImmediate(canvasGo);
         }
 

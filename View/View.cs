@@ -26,8 +26,7 @@ namespace Conduit {
             set { Model = value; }
         }
 
-        public void Initialise (ConduitUIFramework framework)
-        {
+        public void Initialise(ConduitUIFramework framework) {
             _controller = framework.GetController<C>();
 
             if (_transitionHandlers == null || !_transitionHandlers.Any())
@@ -44,19 +43,18 @@ namespace Conduit {
 
         public void Hide() {
             if (!gameObject.activeInHierarchy) return;
-            
+
             foreach (var handler in _transitionHandlers)
                 handler.OnHide();
 
-            if(Model != null)
+            if (Model != null)
                 ClearElements();
         }
 
         protected abstract void LoadElements();
         protected abstract void ClearElements();
 
-        public Type GetControllerType()
-        {
+        public Type GetControllerType() {
             return typeof(C);
         }
     }

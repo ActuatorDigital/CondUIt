@@ -17,7 +17,7 @@ namespace Conduit {
         private List<IView> _views = new List<IView>();
         private List<IController> _controllers = new List<IController>();
 
-        private void Awake() {
+        private void Start() {
 
             if (_controllers.Any())
                 _controllers.Clear();

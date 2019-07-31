@@ -1,5 +1,5 @@
 {
-    "name": "CondUItTests",
+    "name": "CondUIt.Tests",
     "references": [
         "CondUIt"
     ],
@@ -28,5 +28,6 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": []
 }

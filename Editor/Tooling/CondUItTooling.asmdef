@@ -1,5 +1,5 @@
 {
-    "name": "CondUItEditor",
+    "name": "CondUIt.Editor",
     "references": [
         "CondUIt"
     ],
@@ -26,5 +26,6 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": []
 }

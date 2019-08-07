@@ -16,7 +16,7 @@ namespace Conduit {
             GameObject parentGO;
 
             var anyExistingService = FindObjectOfType<MockService>();
-            if (anyExistingService.transform.parent == null) {
+            if (anyExistingService == null || anyExistingService.transform.parent == null) {
                 parentGO = new GameObject("DebugServices");
             } else {
                 parentGO = anyExistingService.transform.parent.gameObject;

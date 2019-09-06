@@ -7,7 +7,7 @@ namespace Conduit {
 
         internal ServiceLoader _services = new ServiceLoader();
 
-        public ConduitServices RegisterService<T>(object service) {
+        public ConduitServices RegisterService<T>(T service) {
             if (_services.CheckServiceRegistered<T>())
                 throw new Exception("Services should be Singletons." +
                     " A service for " + typeof(T).FullName +

@@ -7,11 +7,12 @@ using UnityEngine.UI;
 namespace Conduit {
 
     [RequireComponent(typeof(Canvas))]
-    [RequireComponent(typeof(CanvasScaler))]
-    [RequireComponent(typeof(GraphicRaycaster))]
     [RequireComponent(typeof(EventSystem))]
-    [RequireComponent(typeof(StandaloneInputModule))]
+    [RequireComponent(typeof(CanvasScaler))]
     [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(GraphicRaycaster))]
+    [RequireComponent(typeof(ScreenAspectNotifier))]
+    [RequireComponent(typeof(StandaloneInputModule))]
     public class ConduitUIFramework : MonoBehaviour {
 
         private List<IView> _views = new List<IView>();

@@ -3,22 +3,19 @@ using System.Linq;
 using UnityEngine;
 
 namespace Conduit {
-    [RequireComponent(typeof(RectTransform))]
-    [RequireComponent(typeof(CanvasRenderer))]
-    public abstract class View<M, C> :
-        MonoBehaviour, IView
-        where C : IController {
+
+    public abstract class View<M> :
+        MonoBehaviour, IView {
 
         [SerializeField]
         private TransitionHandler[] _transitionHandlers = new TransitionHandler[0];
 
-        public abstract bool IsPartial { get; }
-
-        IController _controller;
-        public C Controller {
-            get { return (C)_controller; }
-            set { _controller = value; }
+        protected virtual void OnScreenOrientationChanged(ScreenAspect aspect) { }
+        public virtual ScreenAspect CurrentScreenAspect {
+            get { return ScreenAspectNotifier.CurrentScreenAspect; }
         }
+
+        public abstract bool IsPartial { get; }
 
         public object Model { get; set; }
         protected M ViewModel {
@@ -26,8 +23,8 @@ namespace Conduit {
             set { Model = value; }
         }
 
-        public void Initialise(ConduitUIFramework framework) {
-            _controller = framework.GetController<C>();
+        public virtual void Initialise(ConduitUIFramework framework) {
+            ScreenAspectNotifier.OnScreenOrientationChanged += OnScreenOrientationChanged;
 
             if (_transitionHandlers == null || !_transitionHandlers.Any())
                 _transitionHandlers = new TransitionHandler[] {
@@ -42,7 +39,8 @@ namespace Conduit {
         }
 
         public void Hide() {
-            if (!gameObject.activeInHierarchy) return;
+            if (!gameObject.activeInHierarchy)
+                return;
 
             foreach (var handler in _transitionHandlers)
                 handler.OnHide();
@@ -54,7 +52,29 @@ namespace Conduit {
         protected abstract void LoadElements();
         protected abstract void ClearElements();
 
-        public Type GetControllerType() {
+        public virtual Type GetControllerType() {
+            return null;
+        }
+    }
+
+    [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(CanvasRenderer))]
+    public abstract class View<M, C> :
+        View<M>
+        where C : IController {
+
+        public override void Initialise(ConduitUIFramework framework) {
+            _controller = framework.GetController<C>();
+            base.Initialise(framework);
+        }
+
+        IController _controller;
+        public C Controller {
+            get { return (C)_controller; }
+            set { _controller = value; }
+        }
+
+        public override Type GetControllerType() {
             return typeof(C);
         }
     }

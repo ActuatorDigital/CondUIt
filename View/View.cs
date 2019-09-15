@@ -26,12 +26,17 @@ namespace Conduit {
         }
 
         public virtual void Initialise(ConduitUIFramework framework) {
-            ScreenAspectNotifier.OnScreenOrientationChanged += OnScreenOrientationChanged;
+            ScreenAspectNotifier.OnScreenOrientationChanged += HandleScreenOrienationChanged;
 
             if (_transitionHandlers == null || !_transitionHandlers.Any())
                 _transitionHandlers = new TransitionHandler[] {
                     gameObject.AddComponent<OnOffTransition>()
                 };
+        }
+
+        void HandleScreenOrienationChanged(ScreenAspect orientation) {
+            if (Model != null)
+                OnScreenOrientationChanged(orientation);
         }
 
         public void Render() {

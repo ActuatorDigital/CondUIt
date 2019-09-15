@@ -4,8 +4,8 @@ using System.Collections;
 
 namespace Conduit {
     public interface IControllerLoader: IEnumerable {
-        C LoadController<C>() where C : IController;
-        IController LoadController(Type type);
+        C UseController<C>() where C : IController;
+        IController UseController(Type type);
         void Register(IController[] controller);
         IInitialController GetInitialController();
     }

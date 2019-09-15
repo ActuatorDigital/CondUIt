@@ -30,6 +30,7 @@ namespace Conduit {
 
             ConnectUIFamework();
             DeliverServices();
+            
             //DeliverControllers();
         }
 
@@ -48,6 +49,7 @@ namespace Conduit {
 
             var initialController = _controllers.GetInitialController();
             HideViews(initialController.GetType());
+            GetComponent<ScreenAspectNotifier>().Initialize();
         }
 
         void DeliverServices() {
@@ -57,15 +59,6 @@ namespace Conduit {
                 services = gameObject.AddComponent<ConduitServices>();
 
             IController initialController = null;
-
-            //var sb = new StringBuilder();
-            //foreach (var controller in _controllers) {
-            //    sb.Append(controller.GetType() + " " + (controller is IController) + " ");
-            //}
-
-            //var results = sb.ToString();
-            //bool anyNotControllers = _controllers.All(c => c is IController);
-
             foreach (IController controller in _controllers) {
                 controller.LoadServices(services._services);
                 controller.LoadFramework(this);
@@ -79,7 +72,7 @@ namespace Conduit {
 
         internal IController GetController<C>() where C : IController {
             var type = typeof(C);
-            var controller = _controllers.LoadController<C>();
+            var controller = _controllers.UseController<C>();
 
             if (controller == null)
                 throw new MissingComponentException(
@@ -114,7 +107,7 @@ namespace Conduit {
         }
 
         internal void HideViews(Type controllerType) {
-            var targetController = _controllers.LoadController(controllerType);
+            var targetController = _controllers.UseController(controllerType);
             foreach (var view in _views) {
 
                 var viewController = view.GetControllerType();

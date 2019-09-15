@@ -7,12 +7,12 @@ namespace Conduit {
         private Dictionary<Type, IController> _controllers = new Dictionary<Type, IController>();
         IInitialController _initialController;
 
-        public C LoadController<C>() where C : IController {
+        public C UseController<C>() where C : IController {
             ValidateIsRegistered(typeof(C));
             return (C)_controllers[typeof(C)];
         }
 
-        public IController LoadController(Type controllerType){
+        public IController UseController(Type controllerType){
             ValidateIsRegistered(controllerType);
             return _controllers[controllerType];
         }

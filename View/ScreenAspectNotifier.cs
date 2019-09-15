@@ -16,7 +16,7 @@ namespace Conduit {
         public static Action<ScreenAspect> OnScreenOrientationChanged { get; set; }
         public static ScreenAspect CurrentScreenAspect { get { return _screenOrientation; } }
 
-        private void Start() {
+        public void Initialize() {
             StartCoroutine(RespondToScreenOrientation());
         }
 

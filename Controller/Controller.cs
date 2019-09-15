@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace Conduit {
 
-    public abstract class FirstController<M> :
-        Controller<M>, IFirstController where M : IContext { }
+    public abstract class InitialController<M> :
+        Controller<M>, IInitialController where M : IContext { }
 
-    public abstract class FirstController :
-        Controller, IFirstController { }
+    public abstract class InitialController :
+        Controller, IInitialController { }
 
     public abstract class Controller<M> :
         Controller where M : IContext {

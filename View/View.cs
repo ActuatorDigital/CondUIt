@@ -4,7 +4,9 @@ using UnityEngine;
 
 namespace Conduit {
 
-    public abstract class View<M> :
+    [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(CanvasRenderer))]
+    public abstract class ViewBase<M> :
         MonoBehaviour, IView {
 
         [SerializeField]
@@ -57,10 +59,21 @@ namespace Conduit {
         }
     }
 
-    [RequireComponent(typeof(RectTransform))]
-    [RequireComponent(typeof(CanvasRenderer))]
+    public abstract class View<M> : ViewBase<M> {
+
+        public override bool IsPartial => true;
+
+        public override void Initialise(ConduitUIFramework framework) {
+            LoadControllers(framework._controllers);
+            base.Initialise(framework);
+        }
+
+        protected abstract void LoadControllers(IControllerLoader controllers);
+
+    }
+
     public abstract class View<M, C> :
-        View<M>
+        ViewBase<M>
         where C : IController {
 
         public override void Initialise(ConduitUIFramework framework) {

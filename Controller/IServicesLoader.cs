@@ -1,6 +1,6 @@
 ﻿
 namespace Conduit {
     public interface IServiceLoader {
-        T GetService<T>();
+        T UseService<T>();
     }
 }

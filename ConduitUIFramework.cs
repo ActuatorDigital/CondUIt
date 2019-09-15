@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -16,21 +18,23 @@ namespace Conduit {
     public class ConduitUIFramework : MonoBehaviour {
 
         private List<IView> _views = new List<IView>();
-        private List<IController> _controllers = new List<IController>();
+        internal IControllerLoader _controllers = new ControllerLoader();
+        //private List<IController> _controllers = new List<IController>();
 
         private void Start() {
 
-            if (_controllers.Any())
-                _controllers.Clear();
-            if (_views.Any())
-                _views.Clear();
+            //if (_controllers.Any())
+            //    _controllers.Clear();
+            //if (_views.Any())
+            //    _views.Clear();
 
             ConnectUIFamework();
-            DeliverServices<IFirstController>();
+            DeliverServices();
+            //DeliverControllers();
         }
 
         void ConnectUIFamework() {
-            _controllers.AddRange(GetComponentsInChildren<IController>(true));
+            _controllers.Register(GetComponentsInChildren<IController>(true));
             _views.AddRange(GetComponentsInChildren<IView>(true));
 
             foreach (var v in _views) {
@@ -42,31 +46,40 @@ namespace Conduit {
                 }
             }
 
-            HideViews<IFirstController>();
+            var initialController = _controllers.GetInitialController();
+            HideViews(initialController.GetType());
         }
 
-        void DeliverServices<C>() where C : IController {
+        void DeliverServices() {
 
             var services = FindObjectOfType<ConduitServices>();
             if (services == null)
                 services = gameObject.AddComponent<ConduitServices>();
 
-            IController firstController = null;
-            foreach (IController c in _controllers) {
-                c.LoadServices(services._services);
-                c.LoadFramework(this);
-                if (c is C)
-                    firstController = c as IController;
+            IController initialController = null;
+
+            //var sb = new StringBuilder();
+            //foreach (var controller in _controllers) {
+            //    sb.Append(controller.GetType() + " " + (controller is IController) + " ");
+            //}
+
+            //var results = sb.ToString();
+            //bool anyNotControllers = _controllers.All(c => c is IController);
+
+            foreach (IController controller in _controllers) {
+                controller.LoadServices(services._services);
+                controller.LoadFramework(this);
+                if (controller is IInitialController)
+                    initialController = controller;
             }
 
-            firstController.Display();
+            initialController.Display();
             services._services.ClearServices();
         }
 
         internal IController GetController<C>() where C : IController {
             var type = typeof(C);
-            var controller = _controllers
-                .FirstOrDefault(c => c.GetType().IsAssignableFrom(type));
+            var controller = _controllers.LoadController<C>();
 
             if (controller == null)
                 throw new MissingComponentException(
@@ -95,17 +108,32 @@ namespace Conduit {
                     v.Hide();
         }
 
-        internal void HideViews<C>() {
-            var controller = _controllers
-                .First(c => c is C);
-            var exclusiveController = controller.Exclusive;
-            foreach (var v in _views) {
-                var controllerType = v.GetControllerType();
-                var parentController = _controllers
-                    .First(c => c.GetType() == controllerType);
-                var targetIsParent = parentController.Equals(controller);
-                if (controller.Exclusive && !targetIsParent)
-                    v.Hide();
+        internal void HideViews<C>() where C : IController {
+            var controllerType = typeof(C);
+            HideViews(controllerType);
+        }
+
+        internal void HideViews(Type controllerType) {
+            var targetController = _controllers.LoadController(controllerType);
+            foreach (var view in _views) {
+
+                var viewController = view.GetControllerType();
+                var isControllerlessView = viewController == null;
+                if (isControllerlessView) {
+                    view.Hide();
+                    continue;
+                } else {
+                    //var parentController = _controllers
+                    //    .LoadController(controllerType);
+                    //if (targetController == null) {
+                    //    view.Hide();
+                    //} else {
+                        var targetIsParent = viewController.Equals(targetController);
+                        if (targetController.Exclusive && !targetIsParent)
+                            view.Hide();
+                    //}
+                }
+
             }
         }
 

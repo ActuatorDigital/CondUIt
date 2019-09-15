@@ -10,7 +10,7 @@ namespace Conduit {
     }
 
     public class ScreenAspectNotifier : MonoBehaviour {
-        
+
         static ScreenAspect _screenOrientation = ScreenAspect.Landscape;
 
         public static Action<ScreenAspect> OnScreenOrientationChanged { get; set; }

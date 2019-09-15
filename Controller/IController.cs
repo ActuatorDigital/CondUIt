@@ -7,6 +7,6 @@
         bool Exclusive { get; }
     }
 
-    public interface IFirstController : IController { }
+    public interface IInitialController : IController { }
 
 }

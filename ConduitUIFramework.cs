@@ -66,7 +66,7 @@ namespace Conduit {
                     initialController = controller;
             }
 
-            initialController.Display();
+            initialController.Routed();
             services._services.ClearServices();
         }
 
@@ -96,9 +96,11 @@ namespace Conduit {
         }
 
         internal void HideActiveViews() {
-            foreach (var v in _views)
-                if (!v.IsPartial)
-                    v.Hide();
+            foreach (IView view in _views) {
+                (bool isUncontrolled, bool hideOnRoute) = IsUncontrolledView(view);
+                if (hideOnRoute) 
+                    view.Hide();
+            }
         }
 
         internal void HideViews<C>() where C : IController {
@@ -109,25 +111,28 @@ namespace Conduit {
         internal void HideViews(Type controllerType) {
             var targetController = _controllers.UseController(controllerType);
             foreach (var view in _views) {
-
-                var viewController = view.GetControllerType();
-                var isControllerlessView = viewController == null;
-                if (isControllerlessView) {
-                    view.Hide();
-                    continue;
+                (bool isUncontrolled, bool hideOnRoute) = IsUncontrolledView(view);
+                if (isUncontrolled) {
+                    if(hideOnRoute) view.Hide();
                 } else {
-                    //var parentController = _controllers
-                    //    .LoadController(controllerType);
-                    //if (targetController == null) {
-                    //    view.Hide();
-                    //} else {
-                        var targetIsParent = viewController.Equals(targetController);
-                        if (targetController.Exclusive && !targetIsParent)
-                            view.Hide();
-                    //}
+                    var viewController = view.GetControllerType();
+                    var targetIsParent = viewController.Equals(targetController);
+                    if (!targetIsParent) view.Hide();
                 }
 
             }
+        }
+
+        (bool, bool) IsUncontrolledView(IView view) {
+            var viewType = view.GetType();
+            var isUncontrolled = viewType.BaseType.IsGenericType &&
+                viewType.BaseType.GetGenericTypeDefinition() == typeof(View<>);
+            if (!isUncontrolled) return (isUncontrolled, true);
+
+            bool hideOnRoute = (bool)viewType
+                .GetProperty("HideMeOnRoute")
+                .GetValue(view);
+            return (isUncontrolled, hideOnRoute);
         }
 
     }

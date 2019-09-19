@@ -1,11 +1,8 @@
 ﻿using Conduit;
 
 public class TestExclusiveControllerOne : InitialController {
-    public override bool Exclusive {
-        get { return true; }
-    }
 
-    public override void Display() {
+    public override void Routed() {
         UnityEngine.Debug.LogWarning(
             "TODO: Make this implicit " +
             "through view generic type binding!");
@@ -17,18 +14,15 @@ public class TestExclusiveControllerOne : InitialController {
 }
 
 public class TestExclusiveControllerTwo : Controller {
-    public override bool Exclusive {
-        get { return true; }
-    }
 
-    public override void Display() { }
+    public override void Routed() { }
     public void FunctionOnControllerTwo() { }
 
     public override void LoadServices(IServiceLoader services) { }
 }
 
 public class TestExclusiveViewOne : View<TestModel, TestExclusiveControllerOne> {
-    public override bool IsPartial { get { return false; } }
+    //public override bool DoesntHideNeighbours { get { return false; } }
 
     protected override void ClearElements() { }
     protected override void LoadElements() {
@@ -37,7 +31,7 @@ public class TestExclusiveViewOne : View<TestModel, TestExclusiveControllerOne> 
 }
 
 public class TestExclusiveViewTwo : View<TestModel, TestExclusiveControllerOne> {
-    public override bool IsPartial { get { return false; } }
+    //public override bool DoesntHideNeighbours { get { return false; } }
 
     protected override void ClearElements() { }
     protected override void LoadElements() { }
@@ -47,11 +41,7 @@ public class TestControllerOne : InitialController {
 
     public string TestString { get; set; }
 
-    public override bool Exclusive {
-        get { return false; }
-    }
-
-    public override void Display() { }
+    public override void Routed() { }
 
     public void ChangeTestStr(string test) {
         TestString = test;
@@ -62,21 +52,17 @@ public class TestControllerOne : InitialController {
 
 public class TestControllerTwo : Controller {
 
-    public override bool Exclusive {
-        get { return false; }
-    }
-
-    public override void Display() { }
+    public override void Routed() { }
 
     public override void LoadServices(IServiceLoader services) { }
 
     internal void TriggerAction(string postTest) {
-        Redirect<TestControllerOne>().ChangeTestStr(postTest);
+        Route<TestControllerOne>().ChangeTestStr(postTest);
     }
 }
 
 public class TestView : View<TestModel, TestControllerOne> {
-    public override bool IsPartial { get { return false; } }
+    //public override bool DoesntHideNeighbours => false;
 
     protected override void ClearElements() {
         gameObject.SetActive(false);

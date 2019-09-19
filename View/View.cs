@@ -17,7 +17,7 @@ namespace Conduit {
             get { return ScreenAspectNotifier.CurrentScreenAspect; }
         }
 
-        public abstract bool IsPartial { get; }
+        public abstract bool HideNeighbours { get; }
 
         public object Model { get; set; }
         protected M ViewModel {
@@ -66,7 +66,8 @@ namespace Conduit {
 
     public abstract class View<M> : ViewBase<M> {
 
-        public override bool IsPartial => true;
+        public abstract bool HideMeOnRoute { get; }
+        public override bool HideNeighbours => false;
 
         public override void Initialise(ConduitUIFramework framework) {
             LoadControllers(framework._controllers);
@@ -80,6 +81,8 @@ namespace Conduit {
     public abstract class View<M, C> :
         ViewBase<M>
         where C : IController {
+
+        public override bool HideNeighbours => true;
 
         public override void Initialise(ConduitUIFramework framework) {
             _controller = framework.GetController<C>();

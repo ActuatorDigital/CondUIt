@@ -9,6 +9,12 @@ namespace Conduit {
     public abstract class InitialController :
         Controller, IInitialController { }
 
+    /// <summary>
+    /// Controllers handle UI routing and connect the injected service layer to the view layer.
+    /// They effect UI flow with routes, and convert Data Transfer Objects (DTO)
+    /// into View Model (VM) objects for display in views, and handle final view outputs.
+    /// </summary>
+    /// <typeparam name="M">The controller's context model type.</typeparam>
     public abstract class Controller<M> :
         Controller where M : IContext {
 
@@ -31,7 +37,13 @@ namespace Conduit {
             return new InvalidCastException(message);
         }
 
-        public C Redirect<C>(
+        /// <summary>
+        /// Redirect UI flow to another controller.
+        /// </summary>
+        /// <typeparam name="C">Type of the controller to redirect to.</typeparam>
+        /// <param name="context">The context for that controller.</param>
+        /// <returns></returns>
+        public C Route<C>(
             IContext context
         ) where C : class, IController {
 
@@ -45,7 +57,7 @@ namespace Conduit {
                 method.Invoke(targetController, new[] { context });
             }
 
-            base.Redirect<C>();
+            base.Route<C>();
             return targetController as C;
         }
 
@@ -61,22 +73,20 @@ namespace Conduit {
 
         internal ConduitUIFramework _framework;
 
-        public abstract bool Exclusive { get; }
-
         public abstract void LoadServices(IServiceLoader services);
 
-        public abstract void Display();
+        public abstract void Routed();
 
         public void LoadFramework(ConduitUIFramework framework) {
             _framework = framework;
         }
 
-        public C Redirect<C>() where C : class, IController {
+        public C Route<C>() where C : class, IController {
             CheckFrameworkInitialized();
             var targetController = _framework.GetController<C>();
 
             _framework.HideViews<C>();
-            targetController.Display();
+            targetController.Routed();
 
             return targetController as C;
         }
@@ -85,7 +95,7 @@ namespace Conduit {
             CheckFrameworkInitialized();
             var view = _framework.GetView<V>();
 
-            if (!view.IsPartial)
+            if (view.HideNeighbours)
                 _framework.HideActiveViews();
 
             view.Model = viewModel;

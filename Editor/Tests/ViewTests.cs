@@ -136,7 +136,7 @@ namespace Conduit {
             var conduit = canvasGo.AddComponent<ConduitUIFramework>();
 
             // Act.
-            controllerOne.Redirect<TestExclusiveControllerOne>();
+            controllerOne.Route<TestExclusiveControllerOne>();
 
             Assert.IsTrue(!viewGOTwo.activeInHierarchy);
             Assert.IsTrue(viewGOOne.activeInHierarchy);

@@ -48,7 +48,7 @@ namespace Conduit {
 
             var services = FindObjectOfType<ConduitServices>();
             if (services == null)
-                services = gameObject.AddComponent<ConduitServices>();
+                gameObject.AddComponent<ConduitServices>();
 
             IController firstController = null;
             foreach (IController c in _controllers) {
@@ -58,8 +58,8 @@ namespace Conduit {
                     firstController = c as IController;
             }
 
-            firstController.Display();
-            // ConduitServices.Services.ClearServices();
+            if(firstController != null)
+                firstController.Display();
         }
 
         internal IController GetController<C>() where C : IController {
@@ -94,9 +94,10 @@ namespace Conduit {
                     v.Hide();
         }
 
-        internal void HideViews<C>() {
+        internal void HideViews<C>() { 
             var controller = _controllers
-                .First(c => c is C);
+                .FirstOrDefault(c => c is C);
+            if(controller == null) return;
             var exclusiveController = controller.Exclusive;
             foreach (var v in _views) {
                 var controllerType = v.GetControllerType();

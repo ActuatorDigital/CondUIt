@@ -52,14 +52,14 @@ namespace Conduit {
 
             IController firstController = null;
             foreach (IController c in _controllers) {
-                c.LoadServices(services._services);
+                c.LoadServices(ConduitServices.Services);
                 c.LoadFramework(this);
                 if (c is C)
                     firstController = c as IController;
             }
 
             firstController.Display();
-            services._services.ClearServices();
+            // ConduitServices.Services.ClearServices();
         }
 
         internal IController GetController<C>() where C : IController {

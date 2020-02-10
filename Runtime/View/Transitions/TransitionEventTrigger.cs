@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using AIR.Conduit;
+using UnityEngine;
 using UnityEngine.Events;
 
-namespace Conduit.Views {
+namespace AIR.Conduit {
     public class TransitionEventTrigger : TransitionHandler {
         [SerializeField]
         private UnityEvent _showHandlers = null;

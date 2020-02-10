@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Conduit {
+namespace AIR.Conduit {
 
     public class ConduitServices : IDisposable {
 

@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace Conduit {
+namespace AIR.Conduit {
     [RequireComponent(typeof(RectTransform))]
     [RequireComponent(typeof(CanvasRenderer))]
     public abstract class View<M, C> :

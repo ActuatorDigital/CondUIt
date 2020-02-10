@@ -1,5 +1,5 @@
 ﻿
-namespace Conduit {
+namespace AIR.Conduit {
 
     public abstract class Context<P> : IContext
             where P : IContext {

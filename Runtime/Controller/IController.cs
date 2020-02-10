@@ -1,4 +1,4 @@
-﻿namespace Conduit {
+﻿namespace AIR.Conduit {
 
     public interface IController {
         void Display();

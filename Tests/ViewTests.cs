@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using UnityEngine;
 
-namespace Conduit {
+namespace AIR.Conduit.Tests {
 
     public class ViewTests {
 

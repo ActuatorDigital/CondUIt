@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
 
-namespace Conduit {
+namespace AIR.Conduit {
     public class ServiceLoader : IServiceLoader {
         private Dictionary<Type, object> Services = new Dictionary<Type, object>();
         private const string MISSING_SERVICE_LOG = "No service was registered for {0}.";

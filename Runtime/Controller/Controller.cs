@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Conduit {
+namespace AIR.Conduit {
 
     public abstract class FirstController<M> :
         Controller<M>, IFirstController where M : IContext { }

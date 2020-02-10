@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEditor;
 using UnityEngine;
 
-namespace Conduit {
+namespace AIR.Conduit {
     public abstract class MockService : MonoBehaviour {
 
         [SerializeField]

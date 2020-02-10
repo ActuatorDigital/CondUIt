@@ -1,4 +1,4 @@
-﻿namespace Conduit {
+﻿namespace AIR.Conduit {
     public class OnOffTransition : TransitionHandler {
         public override void OnHide() {
             SetActive(false);

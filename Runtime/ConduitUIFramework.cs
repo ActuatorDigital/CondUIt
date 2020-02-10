@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Conduit {
+namespace AIR.Conduit {
 
     [RequireComponent(typeof(Canvas))]
     [RequireComponent(typeof(CanvasScaler))]

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace Conduit {
+namespace AIR.Conduit {
 
     public abstract class ViewBehaviour : MonoBehaviour {
         

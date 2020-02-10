@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Conduit {
+namespace AIR.Conduit {
     public interface IView {
         object Model { get; set; }
         bool IsPartial { get; }

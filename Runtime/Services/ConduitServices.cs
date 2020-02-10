@@ -3,16 +3,17 @@ using UnityEngine;
 
 namespace Conduit {
 
-    public class ConduitServices : MonoBehaviour {
+    public class ConduitServices : IDisposable {
 
-        public static ServiceLoader Services = new ServiceLoader();
+        private static ServiceLoader Services = new ServiceLoader();
 
         public ConduitServices RegisterService<T>(object service) {
-            if (Services.CheckServiceRegistered<T>())
-                throw new Exception("Services should be Singletons." +
-                    " A service for " + typeof(T).FullName +
-                    " is already registered");
-            Services.RegisterService(typeof(T), service);
+            if (Services.CheckServiceRegistered<T>()) 
+                Debug.LogWarning(
+                        " A service for " + typeof(T).FullName +
+                        " is already registered");
+            else
+                Services.RegisterService(typeof(T), service);
             return this;
         }
 
@@ -22,6 +23,17 @@ namespace Conduit {
             return this;
         }
 
+        public static void DeployServices(ViewBehaviour viewBehaviour) {
+            viewBehaviour.LoadServices(Services);
+        }
+        
+        public static void DeployServices(IController controller) {
+            controller.LoadServices(Services);
+        }
+
+        public void Dispose() {
+            Services.ClearServices();
+        }
     }
 
 }

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using netDxf.Tables;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -23,7 +25,7 @@ namespace Conduit {
                 _controllers.Clear();
             if (_views.Any())
                 _views.Clear();
-
+            
             ConnectUIFamework();
             DeliverServices<IFirstController>();
         }
@@ -45,14 +47,10 @@ namespace Conduit {
         }
 
         void DeliverServices<C>() where C : IController {
-
-            var services = FindObjectOfType<ConduitServices>();
-            if (services == null)
-                gameObject.AddComponent<ConduitServices>();
-
+            
             IController firstController = null;
             foreach (IController c in _controllers) {
-                c.LoadServices(ConduitServices.Services);
+                ConduitServices.DeployServices(c);
                 c.LoadFramework(this);
                 if (c is C)
                     firstController = c as IController;

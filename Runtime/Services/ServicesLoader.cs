@@ -1,23 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Xml;
+using UnityEngine;
 
 namespace Conduit {
     public class ServiceLoader : IServiceLoader {
         private Dictionary<Type, object> Services = new Dictionary<Type, object>();
         private const string MISSING_SERVICE_LOG = "No service was registered for {0}.";
 
-        // internal void ClearServices() {
-        //     if (Services == null) return;
-        //     Services.Clear();
-        //     Services = null;
-        // }
+        internal void ClearServices() {
+            if (Services == null) return;
+            Services.Clear();
+            // Services = null;
+        }
 
         internal void RegisterService(Type t, object service) {
             Services[t] = service;
         }
 
-        internal void RegisterService<T>(T service) {
-            Services[typeof(T)] = service;
+        public void RegisterService<T>(T service) {
+            RegisterService(typeof(T), service);
         }
 
         public T GetService<T>() {
@@ -31,5 +33,6 @@ namespace Conduit {
         internal bool CheckServiceRegistered<T>() {
             return Services.ContainsKey(typeof(T));
         }
+        
     }
 }

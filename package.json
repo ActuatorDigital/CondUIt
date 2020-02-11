@@ -12,7 +12,8 @@
   "description": "AIR's dependency inject and UI frameworks, designed to work with Unity's UI system used to quickly create stable, maintainable and extensible user interfaces.",
   "dependencies": {
     "com.unity.test-framework": "1.0.13",
-    "com.unity.ext.nunit": "1.0.0"
+    "com.unity.ext.nunit": "1.0.0",
+    "com.unity.ugui":"1.0.0"
   },
   "relatedPackages": {
     "com.unity.ugui": "1.0.0",
